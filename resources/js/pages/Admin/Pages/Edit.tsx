@@ -42,75 +42,81 @@ export default function PagesEdit({ page }: Props) {
         <h1 className="text-2xl font-bold text-[#1F2937]">Edit Halaman</h1>
         <p className="mt-1 text-sm text-[#6B7280]">Edit: {page.title}</p>
       </div>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Konten Halaman</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-2">
-              <Label htmlFor="title">Judul Halaman</Label>
-              <Input
-                id="title"
-                value={data.title}
-                onChange={(e) => setData('title', e.target.value)}
-                required
-              />
-              <InputError message={errors.title} />
-            </div>
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+          <div className="lg:col-span-3 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Konten Halaman</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="title">Judul Halaman</Label>
+                  <Input
+                    id="title"
+                    value={data.title}
+                    onChange={(e) => setData('title', e.target.value)}
+                    required
+                  />
+                  <InputError message={errors.title} />
+                </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="content">Konten</Label>
-              <RichTextEditor
-                value={data.content}
-                onChange={(value) => setData('content', value)}
-                height={500}
-              />
-              <InputError message={errors.content} />
-            </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="content">Konten</Label>
+                  <RichTextEditor
+                    value={data.content}
+                    onChange={(value) => setData('content', value)}
+                    height={500}
+                  />
+                  <InputError message={errors.content} />
+                </div>
 
-            <div className="flex items-center gap-2">
-              <Checkbox
-                id="is_published"
-                checked={data.is_published}
-                onCheckedChange={(checked) => setData('is_published', checked === true)}
-              />
-              <Label htmlFor="is_published" className="cursor-pointer">Publikasikan halaman ini</Label>
-            </div>
-            <InputError message={errors.is_published} />
-          </CardContent>
-        </Card>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="is_published"
+                    checked={data.is_published}
+                    onCheckedChange={(checked) => setData('is_published', checked === true)}
+                  />
+                  <Label htmlFor="is_published" className="cursor-pointer">Publikasikan halaman ini</Label>
+                </div>
+                <InputError message={errors.is_published} />
+              </CardContent>
+            </Card>
+          </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">SEO / Meta</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-2">
-              <Label htmlFor="meta_title">Meta Title</Label>
-              <Input
-                id="meta_title"
-                value={data.meta_title}
-                onChange={(e) => setData('meta_title', e.target.value)}
-              />
-              <InputError message={errors.meta_title} />
-            </div>
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">SEO / Meta</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="meta_title">Meta Title</Label>
+                  <Input
+                    id="meta_title"
+                    value={data.meta_title}
+                    onChange={(e) => setData('meta_title', e.target.value)}
+                  />
+                  <InputError message={errors.meta_title} />
+                </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="meta_description">Meta Description</Label>
-              <textarea
-                id="meta_description"
-                rows={3}
-                className="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                value={data.meta_description}
-                onChange={(e) => setData('meta_description', e.target.value)}
-              />
-              <InputError message={errors.meta_description} />
-            </div>
-          </CardContent>
-        </Card>
+                <div className="grid gap-2">
+                  <Label htmlFor="meta_description">Meta Description</Label>
+                  <textarea
+                    id="meta_description"
+                    rows={3}
+                    className="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                    value={data.meta_description}
+                    onChange={(e) => setData('meta_description', e.target.value)}
+                  />
+                  <InputError message={errors.meta_description} />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mt-6">
           <Button type="submit" disabled={processing}>
             {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
           </Button>
