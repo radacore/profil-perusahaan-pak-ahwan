@@ -27,7 +27,6 @@ interface Tag {
 interface Post {
   id: number;
   title: string;
-  slug: string;
   content: string;
   author: string;
   blog_category_id: number | null;
@@ -46,7 +45,6 @@ export default function BlogEdit({ post, categories = [] }: Props) {
   const { flash } = usePage().props as { flash?: { success?: string } };
   const { data, setData, put, errors, processing } = useForm({
     title: post.title,
-    slug: post.slug,
     content: post.content,
     author: post.author,
     blog_category_id: post.blog_category_id ? String(post.blog_category_id) : '',
@@ -90,17 +88,6 @@ export default function BlogEdit({ post, categories = [] }: Props) {
                 required
               />
               <InputError message={errors.title} />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="slug">Slug</Label>
-              <Input
-                id="slug"
-                value={data.slug}
-                onChange={(e) => setData('slug', e.target.value)}
-                required
-              />
-              <InputError message={errors.slug} />
             </div>
 
             <div className="grid gap-2">

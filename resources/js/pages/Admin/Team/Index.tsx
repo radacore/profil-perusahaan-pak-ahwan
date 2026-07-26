@@ -10,7 +10,6 @@ interface TeamMember {
   name: string;
   title: string;
   email?: string;
-  display_order: number;
   is_published: boolean;
 }
 
@@ -61,7 +60,6 @@ export default function TeamIndex({ members }: Props) {
                   <TableHead>Nama</TableHead>
                   <TableHead>Jabatan</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Urutan</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Aksi</TableHead>
                 </TableRow>
@@ -72,7 +70,6 @@ export default function TeamIndex({ members }: Props) {
                     <TableCell className="font-medium text-[#1F2937]">{member.name}</TableCell>
                     <TableCell className="text-[#6B7280]">{member.title}</TableCell>
                     <TableCell className="text-[#6B7280]">{member.email || '-'}</TableCell>
-                    <TableCell className="text-[#6B7280]">{member.display_order}</TableCell>
                     <TableCell>
                       <Badge variant={member.is_published ? 'default' : 'secondary'}>
                         {member.is_published ? 'Aktif' : 'Nonaktif'}

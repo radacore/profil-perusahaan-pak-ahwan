@@ -15,7 +15,6 @@ interface TeamMember {
   email?: string;
   phone?: string;
   linkedin_url?: string;
-  display_order: number;
   is_published: boolean;
 }
 
@@ -32,7 +31,6 @@ export default function TeamEdit({ member }: Props) {
     email: member.email || '',
     phone: member.phone || '',
     linkedin_url: member.linkedin_url || '',
-    display_order: member.display_order,
     is_published: member.is_published,
   });
 
@@ -128,17 +126,6 @@ export default function TeamEdit({ member }: Props) {
                 placeholder="https://linkedin.com/in/..."
               />
               <InputError message={errors.linkedin_url} />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="display_order">Urutan Tampil</Label>
-              <Input
-                id="display_order"
-                type="number"
-                value={data.display_order}
-                onChange={(e) => setData('display_order', Number(e.target.value))}
-              />
-              <InputError message={errors.display_order} />
             </div>
 
             <div className="flex items-center gap-2">

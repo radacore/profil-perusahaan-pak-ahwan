@@ -8,9 +8,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 interface Service {
   id: number;
   title: string;
-  slug: string;
   short_description?: string;
-  display_order: number;
   is_published: boolean;
 }
 
@@ -60,7 +58,6 @@ export default function ServicesIndex({ services }: Props) {
                 <TableRow>
                   <TableHead>Judul</TableHead>
                   <TableHead>Deskripsi Singkat</TableHead>
-                  <TableHead>Urutan</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Aksi</TableHead>
                 </TableRow>
@@ -72,7 +69,6 @@ export default function ServicesIndex({ services }: Props) {
                     <TableCell className="max-w-xs truncate text-[#6B7280]">
                       {service.short_description || '-'}
                     </TableCell>
-                    <TableCell className="text-[#6B7280]">{service.display_order}</TableCell>
                     <TableCell>
                       <Badge variant={service.is_published ? 'default' : 'secondary'}>
                         {service.is_published ? 'Aktif' : 'Nonaktif'}

@@ -27,7 +27,7 @@ class TestimonialController extends Controller
         }
 
         return Inertia::render('Admin/Testimonials/Index', [
-            'testimonials' => $query->orderBy('display_order')->paginate(15),
+            'testimonials' => $query->latest()->paginate(15),
             'filters' => $request->only(['status']),
         ]);
     }
@@ -45,7 +45,6 @@ class TestimonialController extends Controller
             'client_title' => ['nullable', 'string', 'max:255'],
             'message' => ['required', 'string'],
             'rating' => ['nullable', 'integer', 'min:1', 'max:5'],
-            'display_order' => ['nullable', 'integer', 'min:0'],
             'status' => ['required', 'in:pending,approved,rejected'],
         ]);
 
@@ -71,7 +70,6 @@ class TestimonialController extends Controller
             'client_title' => ['nullable', 'string', 'max:255'],
             'message' => ['required', 'string'],
             'rating' => ['nullable', 'integer', 'min:1', 'max:5'],
-            'display_order' => ['nullable', 'integer', 'min:0'],
             'status' => ['required', 'in:pending,approved,rejected'],
         ]);
 

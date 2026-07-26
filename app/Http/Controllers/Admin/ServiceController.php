@@ -21,7 +21,7 @@ class ServiceController extends Controller
     public function index(): Response
     {
         return Inertia::render('Admin/Services/Index', [
-            'services' => Service::orderBy('display_order')->get(),
+            'services' => Service::latest()->get(),
         ]);
     }
 
@@ -34,12 +34,15 @@ class ServiceController extends Controller
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:services,slug'],
+            'slug' => ['nullable', 'string', 'max:255', 'unique:services,slug'],
             'description' => ['nullable', 'string'],
             'short_description' => ['nullable', 'string', 'max:500'],
-            'display_order' => ['nullable', 'integer', 'min:0'],
             'is_published' => ['nullable', 'boolean'],
         ]);
+
+        if (empty($validated['slug'])) {
+            $validated['slug'] = str($validated['title'])->slug();
+        }
 
         $validated['is_published'] = $validated['is_published'] ?? true;
         Service::create($validated);
@@ -60,12 +63,15 @@ class ServiceController extends Controller
 
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:services,slug,' . $id],
+            'slug' => ['nullable', 'string', 'max:255', 'unique:services,slug,' . $id],
             'description' => ['nullable', 'string'],
             'short_description' => ['nullable', 'string', 'max:500'],
-            'display_order' => ['nullable', 'integer', 'min:0'],
             'is_published' => ['nullable', 'boolean'],
         ]);
+
+        if (empty($validated['slug'])) {
+            $validated['slug'] = str($validated['title'])->slug();
+        }
 
         $service->update($validated);
 

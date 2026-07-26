@@ -1,4 +1,5 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import InputError from '@/components/input-error';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
@@ -24,17 +26,40 @@ interface Props {
 
 export default function PortfolioCreate({ services = [] }: Props) {
   const { flash } = usePage().props as { flash?: { success?: string } };
+  const [previews, setPreviews] = useState<string[]>([]);
+
   const { data, setData, post, errors, processing } = useForm({
     title: '',
     description: '',
     client_name: '',
     project_date: '',
     service_id: '',
+    is_published: true,
+    images: [] as File[],
   });
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     post('/dashboard-admin/portfolio');
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const newFiles = Array.from(e.target.files || []);
+    setData('images', [...data.images, ...newFiles]);
+
+    const newUrls = newFiles.map((f) => URL.createObjectURL(f));
+    setPreviews((prev) => [...prev, ...newUrls]);
+
+    e.target.value = '';
+  }
+
+  function removeImage(index: number) {
+    const updated = data.images.filter((_, i) => i !== index);
+    setData('images', updated);
+    setPreviews((prev) => {
+      URL.revokeObjectURL(prev[index]);
+      return prev.filter((_, i) => i !== index);
+    });
   }
 
   return (
@@ -52,7 +77,7 @@ export default function PortfolioCreate({ services = [] }: Props) {
         </Alert>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Informasi Proyek</CardTitle>
@@ -121,6 +146,64 @@ export default function PortfolioCreate({ services = [] }: Props) {
               </Select>
               <InputError message={errors.service_id} />
             </div>
+
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="is_published"
+                checked={data.is_published}
+                onCheckedChange={(checked) => setData('is_published', checked === true)}
+              />
+              <Label htmlFor="is_published" className="cursor-pointer">Publikasikan proyek ini</Label>
+            </div>
+            <InputError message={errors.is_published} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Gambar Proyek</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-2">
+              <Label>Upload Gambar</Label>
+              <Input
+                type="file"
+                multiple
+                accept="image/jpeg,image/png,image/gif,image/webp"
+                onChange={handleFileChange}
+                className="cursor-pointer"
+              />
+              <p className="text-xs text-[#6B7280]">
+                Gambar pertama akan menjadi thumbnail. Format: JPEG, PNG, GIF, WebP. Maks 5MB per gambar.
+              </p>
+              <InputError message={errors['images.0']} />
+            </div>
+
+            {previews.length > 0 && (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+                {previews.map((url, index) => (
+                  <div key={url} className="group relative">
+                    <img
+                      src={url}
+                      alt={`Preview ${index + 1}`}
+                      className="h-32 w-full rounded-lg object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100"
+                    >
+                      ✕
+                    </button>
+                    {index === 0 && (
+                      <span className="absolute bottom-1 left-1 rounded bg-blue-600 px-1.5 py-0.5 text-[10px] text-white">
+                        Thumbnail
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 

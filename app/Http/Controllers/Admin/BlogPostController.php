@@ -57,7 +57,7 @@ class BlogPostController extends Controller
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:blog_posts,slug'],
+            'slug' => ['nullable', 'string', 'max:255', 'unique:blog_posts,slug'],
             'content' => ['required', 'string'],
             'author' => ['required', 'string', 'max:255'],
             'status' => ['required', 'in:draft,published'],
@@ -67,6 +67,10 @@ class BlogPostController extends Controller
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:160'],
         ]);
+
+        if (empty($validated['slug'])) {
+            $validated['slug'] = str($validated['title'])->slug();
+        }
 
         $post = BlogPost::create([
             'title' => $validated['title'],
@@ -105,7 +109,7 @@ class BlogPostController extends Controller
 
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:blog_posts,slug,' . $id],
+            'slug' => ['nullable', 'string', 'max:255', 'unique:blog_posts,slug,' . $id],
             'content' => ['required', 'string'],
             'author' => ['required', 'string', 'max:255'],
             'status' => ['required', 'in:draft,published,archived'],
@@ -115,6 +119,10 @@ class BlogPostController extends Controller
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:160'],
         ]);
+
+        if (empty($validated['slug'])) {
+            $validated['slug'] = str($validated['title'])->slug();
+        }
 
         $post->update([
             'title' => $validated['title'],

@@ -34,7 +34,6 @@ export default function BlogCreate({ categories = [] }: Props) {
   const { flash } = usePage().props as { flash?: { success?: string } };
   const { data, setData, post, errors, processing } = useForm({
     title: '',
-    slug: '',
     content: '',
     author: '',
     category_id: '',
@@ -46,15 +45,6 @@ export default function BlogCreate({ categories = [] }: Props) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     post('/dashboard-admin/blog');
-  }
-
-  function generateSlug(title: string) {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim();
   }
 
   return (
@@ -83,27 +73,10 @@ export default function BlogCreate({ categories = [] }: Props) {
               <Input
                 id="title"
                 value={data.title}
-                onChange={(e) => {
-                  setData('title', e.target.value);
-                  if (!data.slug) {
-                    setData('slug', generateSlug(e.target.value));
-                  }
-                }}
+                onChange={(e) => setData('title', e.target.value)}
                 required
               />
               <InputError message={errors.title} />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="slug">Slug</Label>
-              <Input
-                id="slug"
-                value={data.slug}
-                onChange={(e) => setData('slug', e.target.value)}
-                required
-              />
-              <p className="text-xs text-[#6B7280]">Biarkan kosong untuk generate otomatis dari judul.</p>
-              <InputError message={errors.slug} />
             </div>
 
             <div className="grid gap-2">

@@ -51,16 +51,50 @@ class PortfolioProjectController extends Controller
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:portfolio_projects,slug'],
+            'slug' => ['nullable', 'string', 'max:255', 'unique:portfolio_projects,slug'],
             'description' => ['nullable', 'string'],
             'client_name' => ['required', 'string', 'max:255'],
             'project_date' => ['required', 'date'],
             'service_id' => ['nullable', 'exists:services,id'],
             'is_published' => ['nullable', 'boolean'],
+            'images' => ['nullable', 'array'],
+            'images.*' => ['image', 'mimes:jpeg,png,gif,webp', 'max:5120'],
         ]);
 
+        if (empty($validated['slug'])) {
+            $validated['slug'] = str($validated['title'])->slug();
+        }
+
         $validated['is_published'] = $validated['is_published'] ?? true;
-        PortfolioProject::create($validated);
+
+        $project = PortfolioProject::create($validated);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $index => $image) {
+                $data = $this->imageService->convertToWebp($image, 'portfolio');
+
+                if ($index === 0) {
+                    $project->update(['thumbnail_url' => $data['s3_url']]);
+                }
+
+                $media = Media::create([
+                    'filename' => $data['filename'],
+                    'original_filename' => $data['original_filename'],
+                    'mime_type' => $data['mime_type'],
+                    'file_size' => $data['file_size'],
+                    's3_path' => $data['s3_path'],
+                    's3_url' => $data['s3_url'],
+                    'media_type' => 'image',
+                ]);
+
+                PortfolioImage::create([
+                    'portfolio_project_id' => $project->id,
+                    'media_id' => $media->id,
+                    'alt_text' => $project->title,
+                    'display_order' => $index,
+                ]);
+            }
+        }
 
         return redirect()->route('admin.portfolio.index')->with('success', 'Proyek berhasil ditambahkan.');
     }
@@ -82,13 +116,17 @@ class PortfolioProjectController extends Controller
 
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:portfolio_projects,slug,' . $id],
+            'slug' => ['nullable', 'string', 'max:255', 'unique:portfolio_projects,slug,' . $id],
             'description' => ['nullable', 'string'],
             'client_name' => ['required', 'string', 'max:255'],
             'project_date' => ['required', 'date'],
             'service_id' => ['nullable', 'exists:services,id'],
             'is_published' => ['nullable', 'boolean'],
         ]);
+
+        if (empty($validated['slug'])) {
+            $validated['slug'] = str($validated['title'])->slug();
+        }
 
         $project->update($validated);
 

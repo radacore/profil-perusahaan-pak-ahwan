@@ -22,7 +22,7 @@ class TeamMemberController extends Controller
     public function index(): Response
     {
         return Inertia::render('Admin/Team/Index', [
-            'members' => TeamMember::with('media')->orderBy('display_order')->get(),
+            'members' => TeamMember::with('media')->latest()->get(),
         ]);
     }
 
@@ -40,7 +40,6 @@ class TeamMemberController extends Controller
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
             'linkedin_url' => ['nullable', 'string', 'max:255'],
-            'display_order' => ['nullable', 'integer', 'min:0'],
             'is_published' => ['nullable', 'boolean'],
         ]);
 
@@ -68,7 +67,6 @@ class TeamMemberController extends Controller
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
             'linkedin_url' => ['nullable', 'string', 'max:255'],
-            'display_order' => ['nullable', 'integer', 'min:0'],
             'is_published' => ['nullable', 'boolean'],
         ]);
 

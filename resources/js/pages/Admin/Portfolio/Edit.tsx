@@ -1,4 +1,5 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage, router } from '@inertiajs/react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,7 +30,6 @@ interface GalleryImage {
 interface Project {
   id: number;
   title: string;
-  slug: string;
   description: string;
   client_name?: string;
   project_date?: string;
@@ -44,11 +44,13 @@ interface Props {
   gallery?: GalleryImage[];
 }
 
-export default function PortfolioEdit({ project, services = [] }: Props) {
+export default function PortfolioEdit({ project, services = [], gallery = [] }: Props) {
   const { flash } = usePage().props as { flash?: { success?: string } };
+  const [uploading, setUploading] = useState(false);
+  const [addingGallery, setAddingGallery] = useState(false);
+
   const { data, setData, put, errors, processing } = useForm({
     title: project.title,
-    slug: project.slug,
     description: project.description,
     client_name: project.client_name || '',
     project_date: project.project_date || '',
@@ -59,6 +61,54 @@ export default function PortfolioEdit({ project, services = [] }: Props) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     put(`/dashboard-admin/portfolio/${project.id}`);
+  }
+
+  function handleThumbnailUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    e.target.value = '';
+    router.post(
+      `/dashboard-admin/portfolio/${project.id}/thumbnail`,
+      { thumbnail: file },
+      {
+        preserveScroll: true,
+        onFinish: () => setUploading(false),
+      },
+    );
+  }
+
+  function handleGalleryAdd(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    e.target.value = '';
+    setAddingGallery(true);
+
+    let completed = 0;
+    files.forEach((file) => {
+      router.post(
+        `/dashboard-admin/portfolio/${project.id}/gallery`,
+        { image: file, caption: project.title },
+        {
+          preserveScroll: true,
+          onFinish: () => {
+            completed++;
+            if (completed === files.length) {
+              setAddingGallery(false);
+            }
+          },
+        },
+      );
+    });
+  }
+
+  function handleGalleryDelete(imageId: number) {
+    if (!window.confirm('Yakin ingin menghapus gambar ini?')) return;
+    router.delete(`/dashboard-admin/portfolio/${project.id}/gallery/${imageId}`, {
+      preserveScroll: true,
+    });
   }
 
   return (
@@ -91,17 +141,6 @@ export default function PortfolioEdit({ project, services = [] }: Props) {
                 required
               />
               <InputError message={errors.title} />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="slug">Slug</Label>
-              <Input
-                id="slug"
-                value={data.slug}
-                onChange={(e) => setData('slug', e.target.value)}
-                required
-              />
-              <InputError message={errors.slug} />
             </div>
 
             <div className="grid gap-2">
@@ -166,6 +205,88 @@ export default function PortfolioEdit({ project, services = [] }: Props) {
               <Label htmlFor="is_published" className="cursor-pointer">Publikasikan proyek ini</Label>
             </div>
             <InputError message={errors.is_published} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Thumbnail</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {project.thumbnail_url && (
+              <div className="mb-3">
+                <img
+                  src={project.thumbnail_url}
+                  alt="Thumbnail saat ini"
+                  className="h-40 w-full rounded-lg object-cover sm:w-80"
+                />
+              </div>
+            )}
+            <div className="grid gap-2">
+              <Label htmlFor="thumbnail">
+                {project.thumbnail_url ? 'Ganti Thumbnail' : 'Upload Thumbnail'}
+              </Label>
+              <Input
+                id="thumbnail"
+                type="file"
+                accept="image/jpeg,image/png,image/gif,image/webp"
+                onChange={handleThumbnailUpload}
+                disabled={uploading}
+                className="cursor-pointer"
+              />
+              <InputError message={errors.thumbnail} />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Galeri</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {gallery.length > 0 ? (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+                {gallery.map((img) => (
+                  <div key={img.id} className="group relative">
+                    <img
+                      src={img.media?.s3_url}
+                      alt={img.alt_text || ''}
+                      className="h-32 w-full rounded-lg object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleGalleryDelete(img.id)}
+                      className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100"
+                    >
+                      ✕
+                    </button>
+                    {img.display_order === 0 && (
+                      <span className="absolute bottom-1 left-1 rounded bg-blue-600 px-1.5 py-0.5 text-[10px] text-white">
+                        Thumbnail
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-[#6B7280]">Belum ada gambar galeri.</p>
+            )}
+
+            <div className="grid gap-2">
+              <Label htmlFor="gallery_upload">Tambah Gambar</Label>
+              <Input
+                id="gallery_upload"
+                type="file"
+                multiple
+                accept="image/jpeg,image/png,image/gif,image/webp"
+                onChange={handleGalleryAdd}
+                disabled={addingGallery}
+                className="cursor-pointer"
+              />
+              {addingGallery && (
+                <p className="text-sm text-[#6B7280]">Mengupload...</p>
+              )}
+            </div>
           </CardContent>
         </Card>
 

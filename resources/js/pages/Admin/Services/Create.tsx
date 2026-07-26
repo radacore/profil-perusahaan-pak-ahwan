@@ -11,25 +11,14 @@ export default function ServicesCreate() {
   const { flash } = usePage().props as { flash?: { success?: string } };
   const { data, setData, post, errors, processing } = useForm({
     title: '',
-    slug: '',
     description: '',
     short_description: '',
-    display_order: 0,
     is_published: false,
   });
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     post('/dashboard-admin/services');
-  }
-
-  function generateSlug(title: string) {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim();
   }
 
   return (
@@ -58,27 +47,10 @@ export default function ServicesCreate() {
               <Input
                 id="title"
                 value={data.title}
-                onChange={(e) => {
-                  setData('title', e.target.value);
-                  if (!data.slug) {
-                    setData('slug', generateSlug(e.target.value));
-                  }
-                }}
+                onChange={(e) => setData('title', e.target.value)}
                 required
               />
               <InputError message={errors.title} />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="slug">Slug</Label>
-              <Input
-                id="slug"
-                value={data.slug}
-                onChange={(e) => setData('slug', e.target.value)}
-                required
-              />
-              <p className="text-xs text-[#6B7280]">Biarkan kosong untuk generate otomatis.</p>
-              <InputError message={errors.slug} />
             </div>
 
             <div className="grid gap-2">
@@ -103,17 +75,6 @@ export default function ServicesCreate() {
                 onChange={(e) => setData('description', e.target.value)}
               />
               <InputError message={errors.description} />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="display_order">Urutan Tampil</Label>
-              <Input
-                id="display_order"
-                type="number"
-                value={data.display_order}
-                onChange={(e) => setData('display_order', Number(e.target.value))}
-              />
-              <InputError message={errors.display_order} />
             </div>
 
             <div className="flex items-center gap-2">

@@ -16,7 +16,6 @@ export default function TeamCreate() {
     email: '',
     phone: '',
     linkedin_url: '',
-    display_order: 0,
     is_published: false,
   });
 
@@ -112,17 +111,6 @@ export default function TeamCreate() {
                 placeholder="https://linkedin.com/in/..."
               />
               <InputError message={errors.linkedin_url} />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="display_order">Urutan Tampil</Label>
-              <Input
-                id="display_order"
-                type="number"
-                value={data.display_order}
-                onChange={(e) => setData('display_order', Number(e.target.value))}
-              />
-              <InputError message={errors.display_order} />
             </div>
 
             <div className="flex items-center gap-2">

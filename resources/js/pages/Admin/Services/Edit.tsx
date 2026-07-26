@@ -10,10 +10,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 interface Service {
   id: number;
   title: string;
-  slug: string;
   description: string;
   short_description: string;
-  display_order: number;
   is_published: boolean;
 }
 
@@ -25,10 +23,8 @@ export default function ServicesEdit({ service }: Props) {
   const { flash } = usePage().props as { flash?: { success?: string } };
   const { data, setData, put, errors, processing } = useForm({
     title: service.title,
-    slug: service.slug,
     description: service.description,
     short_description: service.short_description,
-    display_order: service.display_order,
     is_published: service.is_published,
   });
 
@@ -70,17 +66,6 @@ export default function ServicesEdit({ service }: Props) {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="slug">Slug</Label>
-              <Input
-                id="slug"
-                value={data.slug}
-                onChange={(e) => setData('slug', e.target.value)}
-                required
-              />
-              <InputError message={errors.slug} />
-            </div>
-
-            <div className="grid gap-2">
               <Label htmlFor="short_description">Deskripsi Singkat</Label>
               <textarea
                 id="short_description"
@@ -102,17 +87,6 @@ export default function ServicesEdit({ service }: Props) {
                 onChange={(e) => setData('description', e.target.value)}
               />
               <InputError message={errors.description} />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="display_order">Urutan Tampil</Label>
-              <Input
-                id="display_order"
-                type="number"
-                value={data.display_order}
-                onChange={(e) => setData('display_order', Number(e.target.value))}
-              />
-              <InputError message={errors.display_order} />
             </div>
 
             <div className="flex items-center gap-2">
