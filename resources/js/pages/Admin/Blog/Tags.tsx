@@ -90,12 +90,7 @@ export default function BlogTags({ tags }: Props) {
                       <TableCell className="text-[#6B7280]">{tag.slug}</TableCell>
                       <TableCell className="text-[#6B7280]">{tag.blog_posts_count}</TableCell>
                       <TableCell>
-                        <button
-                          onClick={() => setDeleteId(tag.id)}
-                          className="text-sm font-medium text-red-600 hover:underline"
-                        >
-                          Hapus
-                        </button>
+                        <Button size="sm" onClick={() => setDeleteId(tag.id)} className="bg-black text-white hover:bg-red-600 hover:text-white">Hapus</Button>
                       </TableCell>
                     </TableRow>
                   ))}

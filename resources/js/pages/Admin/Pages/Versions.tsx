@@ -77,19 +77,10 @@ export default function PageVersions({ page, versions }: Props) {
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Link
-                        href={`/dashboard-admin/pages/${page.id}/versions/${version.id}`}
-                        className="text-sm font-medium text-[#1E3A8A] hover:underline"
-                      >
-                        Lihat
+                      <Link href={`/dashboard-admin/pages/${page.id}/versions/${version.id}`}>
+                        <Button size="sm" className="bg-black text-white hover:bg-green-600 hover:text-white">Lihat</Button>
                       </Link>
-                      <span className="text-[#D1D5DB]">|</span>
-                      <button
-                        onClick={() => setRollbackId(version.id)}
-                        className="text-sm font-medium text-amber-600 hover:underline"
-                      >
-                        Rollback
-                      </button>
+                      <Button size="sm" onClick={() => setRollbackId(version.id)} className="bg-black text-white hover:bg-red-600 hover:text-white">Rollback</Button>
                     </div>
                   </div>
                   {version.change_notes && (

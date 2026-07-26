@@ -90,12 +90,7 @@ export default function BlogCategories({ categories }: Props) {
                       <TableCell className="text-[#6B7280]">{cat.slug}</TableCell>
                       <TableCell className="text-[#6B7280]">{cat.blog_posts_count}</TableCell>
                       <TableCell>
-                        <button
-                          onClick={() => setDeleteId(cat.id)}
-                          className="text-sm font-medium text-red-600 hover:underline"
-                        >
-                          Hapus
-                        </button>
+                        <Button size="sm" onClick={() => setDeleteId(cat.id)} className="bg-black text-white hover:bg-red-600 hover:text-white">Hapus</Button>
                       </TableCell>
                     </TableRow>
                   ))}

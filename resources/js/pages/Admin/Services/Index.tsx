@@ -13,8 +13,15 @@ interface Service {
   is_published: boolean;
 }
 
+interface PaginatedServices {
+  data: Service[];
+  current_page: number;
+  last_page: number;
+  total: number;
+}
+
 interface Props {
-  services: Service[];
+  services: PaginatedServices;
 }
 
 export default function ServicesIndex({ services }: Props) {
@@ -41,10 +48,10 @@ export default function ServicesIndex({ services }: Props) {
       </div>
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Daftar Layanan</CardTitle>
+          <CardTitle className="text-lg">Daftar Layanan ({services.total})</CardTitle>
         </CardHeader>
         <CardContent>
-          {services.length === 0 ? (
+          {services.data.length === 0 ? (
             <p className="text-sm text-[#6B7280]">Belum ada layanan.</p>
           ) : (
             <Table>
@@ -57,7 +64,7 @@ export default function ServicesIndex({ services }: Props) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {services.map((service) => (
+                {services.data.map((service) => (
                   <TableRow key={service.id}>
                     <TableCell className="font-medium text-[#1F2937]">{service.title}</TableCell>
                     <TableCell className="max-w-xs truncate text-[#6B7280]">
@@ -70,25 +77,42 @@ export default function ServicesIndex({ services }: Props) {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Link
-                          href={`/dashboard-admin/services/${service.id}/edit`}
-                          className="text-sm font-medium text-[#1E3A8A] hover:underline"
-                        >
-                          Edit
+                        <Link href={`/dashboard-admin/services/${service.id}/edit`}>
+                          <Button size="sm" className="bg-black text-white hover:bg-green-600 hover:text-white">Edit</Button>
                         </Link>
-                        <span className="text-[#D1D5DB]">|</span>
-                        <button
-                          onClick={() => setDeleteId(service.id)}
-                          className="text-sm font-medium text-red-600 hover:underline"
-                        >
-                          Hapus
-                        </button>
+                        <Button size="sm" onClick={() => setDeleteId(service.id)} className="bg-black text-white hover:bg-red-600 hover:text-white">Hapus</Button>
                       </div>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+          )}
+
+          {services.last_page > 1 && (
+            <div className="mt-4 flex items-center justify-between border-t pt-4">
+              <p className="text-sm text-[#6B7280]">
+                Halaman {services.current_page} dari {services.last_page}
+              </p>
+              <div className="flex items-center gap-2">
+                {services.current_page > 1 && (
+                  <Link
+                    href={`/dashboard-admin/services?page=${services.current_page - 1}`}
+                    className="rounded-md border px-3 py-1 text-sm text-[#6B7280] hover:bg-gray-50"
+                  >
+                    Sebelumnya
+                  </Link>
+                )}
+                {services.current_page < services.last_page && (
+                  <Link
+                    href={`/dashboard-admin/services?page=${services.current_page + 1}`}
+                    className="rounded-md border px-3 py-1 text-sm text-[#6B7280] hover:bg-gray-50"
+                  >
+                    Selanjutnya
+                  </Link>
+                )}
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>

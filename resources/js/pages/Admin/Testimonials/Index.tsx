@@ -115,19 +115,10 @@ export default function TestimonialsIndex({ testimonials }: Props) {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Link
-                          href={`/dashboard-admin/testimonials/${testimonial.id}/edit`}
-                          className="text-sm font-medium text-[#1E3A8A] hover:underline"
-                        >
-                          Edit
+                        <Link href={`/dashboard-admin/testimonials/${testimonial.id}/edit`}>
+                          <Button size="sm" className="bg-black text-white hover:bg-green-600 hover:text-white">Edit</Button>
                         </Link>
-                        <span className="text-[#D1D5DB]">|</span>
-                        <button
-                          onClick={() => setDeleteId(testimonial.id)}
-                          className="text-sm font-medium text-red-600 hover:underline"
-                        >
-                          Hapus
-                        </button>
+                        <Button size="sm" onClick={() => setDeleteId(testimonial.id)} className="bg-black text-white hover:bg-red-600 hover:text-white">Hapus</Button>
                       </div>
                     </TableCell>
                   </TableRow>

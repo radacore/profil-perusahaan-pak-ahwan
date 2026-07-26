@@ -20,7 +20,7 @@ class PageController extends Controller
     public function index(): Response
     {
         return Inertia::render('Admin/Pages/Index', [
-            'pages' => Page::all(),
+            'pages' => Page::latest()->paginate(15),
         ]);
     }
 

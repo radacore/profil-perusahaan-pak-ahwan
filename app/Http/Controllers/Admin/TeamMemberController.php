@@ -22,7 +22,7 @@ class TeamMemberController extends Controller
     public function index(): Response
     {
         return Inertia::render('Admin/Team/Index', [
-            'members' => TeamMember::with('media')->latest()->get(),
+            'members' => TeamMember::with('media')->latest()->paginate(15),
         ]);
     }
 

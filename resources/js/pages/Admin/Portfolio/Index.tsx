@@ -89,19 +89,10 @@ export default function PortfolioIndex({ projects }: Props) {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Link
-                          href={`/dashboard-admin/portfolio/${project.id}/edit`}
-                          className="text-sm font-medium text-[#1E3A8A] hover:underline"
-                        >
-                          Edit
+                        <Link href={`/dashboard-admin/portfolio/${project.id}/edit`}>
+                          <Button size="sm" className="bg-black text-white hover:bg-green-600 hover:text-white">Edit</Button>
                         </Link>
-                        <span className="text-[#D1D5DB]">|</span>
-                        <button
-                          onClick={() => setDeleteId(project.id)}
-                          className="text-sm font-medium text-red-600 hover:underline"
-                        >
-                          Hapus
-                        </button>
+                        <Button size="sm" onClick={() => setDeleteId(project.id)} className="bg-black text-white hover:bg-red-600 hover:text-white">Hapus</Button>
                       </div>
                     </TableCell>
                   </TableRow>

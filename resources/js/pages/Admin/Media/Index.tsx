@@ -1,4 +1,4 @@
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head, useForm, router, Link } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useState } from 'react';
@@ -15,8 +15,15 @@ interface MediaItem {
   created_at: string;
 }
 
+interface PaginatedMedia {
+  data: MediaItem[];
+  current_page: number;
+  last_page: number;
+  total: number;
+}
+
 interface Props {
-  media: MediaItem[];
+  media: PaginatedMedia;
   filters?: { media_type?: string };
 }
 
@@ -95,7 +102,7 @@ export default function MediaIndex({ media }: Props) {
       </Card>
 
       {/* Media Grid */}
-      {media.length === 0 ? (
+      {media.data.length === 0 ? (
         <Card>
           <CardContent className="p-6">
             <p className="text-center text-sm text-[#6B7280]">
@@ -104,39 +111,64 @@ export default function MediaIndex({ media }: Props) {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {media.map((item) => (
-            <Card key={item.id} className="overflow-hidden">
-              <div className="aspect-square bg-[#F3F4F6]">
-                {item.mime_type?.startsWith('image/') ? (
-                  <img
-                    src={item.thumbnail_url || item.url}
-                    alt={item.original_name}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-[#6B7280]">
-                    <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
+        <>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {media.data.map((item) => (
+              <Card key={item.id} className="overflow-hidden">
+                <div className="aspect-square bg-[#F3F4F6]">
+                  {item.mime_type?.startsWith('image/') ? (
+                    <img
+                      src={item.thumbnail_url || item.url}
+                      alt={item.original_name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-[#6B7280]">
+                      <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                <CardContent className="p-3">
+                  <p className="truncate text-xs font-medium text-[#1F2937]">
+                    {item.original_name}
+                  </p>
+                  <p className="text-xs text-[#6B7280]">{formatFileSize(item.size)}</p>
+                  <div className="mt-1">
+                    <Button size="sm" onClick={() => setDeleteId(item.id)} className="bg-black text-white hover:bg-red-600 hover:text-white">Hapus</Button>
                   </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {media.last_page > 1 && (
+            <div className="mt-6 flex items-center justify-between border-t pt-4">
+              <p className="text-sm text-[#6B7280]">
+                Halaman {media.current_page} dari {media.last_page}
+              </p>
+              <div className="flex items-center gap-2">
+                {media.current_page > 1 && (
+                  <Link
+                    href={`/dashboard-admin/media?page=${media.current_page - 1}`}
+                    className="rounded-md border px-3 py-1 text-sm text-[#6B7280] hover:bg-gray-50"
+                  >
+                    Sebelumnya
+                  </Link>
+                )}
+                {media.current_page < media.last_page && (
+                  <Link
+                    href={`/dashboard-admin/media?page=${media.current_page + 1}`}
+                    className="rounded-md border px-3 py-1 text-sm text-[#6B7280] hover:bg-gray-50"
+                  >
+                    Selanjutnya
+                  </Link>
                 )}
               </div>
-              <CardContent className="p-3">
-                <p className="truncate text-xs font-medium text-[#1F2937]">
-                  {item.original_name}
-                </p>
-                <p className="text-xs text-[#6B7280]">{formatFileSize(item.size)}</p>
-                <button
-                  onClick={() => setDeleteId(item.id)}
-                  className="mt-1 text-xs font-medium text-red-600 hover:underline"
-                >
-                  Hapus
-                </button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+            </div>
+          )}
+        </>
       )}
       <ConfirmDialog
         open={deleteId !== null}

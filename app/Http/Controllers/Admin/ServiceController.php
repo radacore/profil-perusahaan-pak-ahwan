@@ -21,7 +21,7 @@ class ServiceController extends Controller
     public function index(): Response
     {
         return Inertia::render('Admin/Services/Index', [
-            'services' => Service::latest()->get(),
+            'services' => Service::latest()->paginate(15),
         ]);
     }
 

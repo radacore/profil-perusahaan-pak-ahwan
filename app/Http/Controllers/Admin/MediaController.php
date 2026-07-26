@@ -28,7 +28,7 @@ class MediaController extends Controller
         }
 
         return Inertia::render('Admin/Media/Index', [
-            'media' => $query->latest()->get()->map(fn ($m) => [
+            'media' => $query->latest()->paginate(15)->through(fn ($m) => [
                 'id' => $m->id,
                 'filename' => $m->filename,
                 'original_name' => $m->original_filename,
