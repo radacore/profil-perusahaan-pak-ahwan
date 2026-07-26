@@ -1,5 +1,6 @@
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,10 +28,13 @@ export default function BlogTags({ tags }: Props) {
     });
   }
 
-  function handleDelete(id: number) {
-    if (window.confirm('Yakin ingin menghapus tag ini?')) {
-      router.delete(`/dashboard-admin/blog-tags/${id}`);
-    }
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+
+  function handleDelete() {
+    if (!deleteId) return;
+    router.delete(`/dashboard-admin/blog-tags/${deleteId}`, {
+      onFinish: () => setDeleteId(null),
+    });
   }
 
   return (
@@ -87,7 +91,7 @@ export default function BlogTags({ tags }: Props) {
                       <TableCell className="text-[#6B7280]">{tag.blog_posts_count}</TableCell>
                       <TableCell>
                         <button
-                          onClick={() => handleDelete(tag.id)}
+                          onClick={() => setDeleteId(tag.id)}
                           className="text-sm font-medium text-red-600 hover:underline"
                         >
                           Hapus
@@ -101,6 +105,13 @@ export default function BlogTags({ tags }: Props) {
           </CardContent>
         </Card>
       </div>
+      <ConfirmDialog
+        open={deleteId !== null}
+        onOpenChange={(open) => { if (!open) setDeleteId(null); }}
+        onConfirm={handleDelete}
+        title="Hapus Tag"
+        description="Tag akan dihapus permanen. Post yang menggunakan tag ini tidak akan terpengaruh."
+      />
     </>
   );
 }

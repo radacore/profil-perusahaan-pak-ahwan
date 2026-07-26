@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 import {
   Select,
   SelectContent,
@@ -46,6 +47,7 @@ interface Props {
 export default function PortfolioEdit({ project, services = [], gallery = [] }: Props) {
   const [uploading, setUploading] = useState(false);
   const [addingGallery, setAddingGallery] = useState(false);
+  const [deleteGalleryId, setDeleteGalleryId] = useState<number | null>(null);
 
   const { data, setData, put, errors, processing } = useForm({
     title: project.title,
@@ -97,10 +99,11 @@ export default function PortfolioEdit({ project, services = [], gallery = [] }: 
     });
   }
 
-  function handleGalleryDelete(imageId: number) {
-    if (!window.confirm('Yakin ingin menghapus gambar ini?')) return;
-    router.delete(`/dashboard-admin/portfolio/${project.id}/gallery/${imageId}`, {
+  function handleGalleryDelete() {
+    if (!deleteGalleryId) return;
+    router.delete(`/dashboard-admin/portfolio/${project.id}/gallery/${deleteGalleryId}`, {
       preserveScroll: true,
+      onFinish: () => setDeleteGalleryId(null),
     });
   }
 
@@ -212,7 +215,7 @@ export default function PortfolioEdit({ project, services = [], gallery = [] }: 
                         />
                         <button
                           type="button"
-                          onClick={() => handleGalleryDelete(img.id)}
+                          onClick={() => setDeleteGalleryId(img.id)}
                           className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100"
                         >
                           ✕
@@ -257,6 +260,14 @@ export default function PortfolioEdit({ project, services = [], gallery = [] }: 
           </Button>
         </div>
       </form>
+
+      <ConfirmDialog
+        open={deleteGalleryId !== null}
+        onOpenChange={(open) => { if (!open) setDeleteGalleryId(null); }}
+        onConfirm={handleGalleryDelete}
+        title="Hapus Gambar"
+        description="Gambar akan dihapus dari galeri proyek ini. Apakah Anda yakin ingin melanjutkan?"
+      />
     </>
   );
 }

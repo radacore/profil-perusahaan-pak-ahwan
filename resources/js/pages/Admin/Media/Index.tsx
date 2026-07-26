@@ -1,7 +1,8 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useState } from 'react';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 
 interface MediaItem {
   id: number;
@@ -27,6 +28,14 @@ function formatFileSize(bytes: number): string {
 
 export default function MediaIndex({ media }: Props) {
   const [isUploading, setIsUploading] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+
+  function handleDelete() {
+    if (!deleteId) return;
+    router.delete(`/dashboard-admin/media/${deleteId}`, {
+      onFinish: () => setDeleteId(null),
+    });
+  }
 
   const { data, setData, post, errors, processing } = useForm({
     file: null as File | null,
@@ -118,11 +127,24 @@ export default function MediaIndex({ media }: Props) {
                   {item.original_name}
                 </p>
                 <p className="text-xs text-[#6B7280]">{formatFileSize(item.size)}</p>
+                <button
+                  onClick={() => setDeleteId(item.id)}
+                  className="mt-1 text-xs font-medium text-red-600 hover:underline"
+                >
+                  Hapus
+                </button>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
+      <ConfirmDialog
+        open={deleteId !== null}
+        onOpenChange={(open) => { if (!open) setDeleteId(null); }}
+        onConfirm={handleDelete}
+        title="Hapus File"
+        description="File akan dihapus dari media library dan tidak bisa dikembalikan. Apakah Anda yakin ingin melanjutkan?"
+      />
     </>
   );
 }

@@ -1,8 +1,10 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 
 interface Service {
   id: number;
@@ -16,11 +18,13 @@ interface Props {
 }
 
 export default function ServicesIndex({ services }: Props) {
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
-  function handleDelete(id: number) {
-    if (window.confirm('Yakin ingin menghapus layanan ini?')) {
-      router.delete(`/dashboard-admin/services/${id}`);
-    }
+  function handleDelete() {
+    if (!deleteId) return;
+    router.delete(`/dashboard-admin/services/${deleteId}`, {
+      onFinish: () => setDeleteId(null),
+    });
   }
 
   return (
@@ -74,7 +78,7 @@ export default function ServicesIndex({ services }: Props) {
                         </Link>
                         <span className="text-[#D1D5DB]">|</span>
                         <button
-                          onClick={() => handleDelete(service.id)}
+                          onClick={() => setDeleteId(service.id)}
                           className="text-sm font-medium text-red-600 hover:underline"
                         >
                           Hapus
@@ -88,6 +92,13 @@ export default function ServicesIndex({ services }: Props) {
           )}
         </CardContent>
       </Card>
+      <ConfirmDialog
+        open={deleteId !== null}
+        onOpenChange={(open) => { if (!open) setDeleteId(null); }}
+        onConfirm={handleDelete}
+        title="Hapus Layanan"
+        description="Layanan yang dihapus tidak bisa dikembalikan. Apakah Anda yakin ingin melanjutkan?"
+      />
     </>
   );
 }

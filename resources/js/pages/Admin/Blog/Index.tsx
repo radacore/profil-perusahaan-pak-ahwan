@@ -1,8 +1,10 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 
 interface Post {
   id: number;
@@ -28,11 +30,13 @@ interface Props {
 }
 
 export default function BlogIndex({ posts }: Props) {
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
-  function handleDelete(id: number) {
-    if (window.confirm('Yakin ingin menghapus post ini?')) {
-      router.delete(`/dashboard-admin/blog/${id}`);
-    }
+  function handleDelete() {
+    if (!deleteId) return;
+    router.delete(`/dashboard-admin/blog/${deleteId}`, {
+      onFinish: () => setDeleteId(null),
+    });
   }
 
   return (
@@ -95,7 +99,7 @@ export default function BlogIndex({ posts }: Props) {
                         </Link>
                         <span className="text-[#D1D5DB]">|</span>
                         <button
-                          onClick={() => handleDelete(post.id)}
+                          onClick={() => setDeleteId(post.id)}
                           className="text-sm font-medium text-red-600 hover:underline"
                         >
                           Hapus
@@ -136,6 +140,13 @@ export default function BlogIndex({ posts }: Props) {
           )}
         </CardContent>
       </Card>
+      <ConfirmDialog
+        open={deleteId !== null}
+        onOpenChange={(open) => { if (!open) setDeleteId(null); }}
+        onConfirm={handleDelete}
+        title="Hapus Post"
+        description="Post akan dihapus permanen. Apakah Anda yakin ingin melanjutkan?"
+      />
     </>
   );
 }

@@ -1,7 +1,9 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 
 interface Version {
   id: number;
@@ -19,10 +21,10 @@ interface Props {
 }
 
 export default function ShowPageVersion({ version }: Props) {
+  const [showRollbackConfirm, setShowRollbackConfirm] = useState(false);
+
   function handleRollback() {
-    if (window.confirm('Yakin ingin mengembalikan ke versi ini?')) {
-      router.post(`/dashboard-admin/pages/${version.page_id}/versions/${version.id}/rollback`);
-    }
+    router.post(`/dashboard-admin/pages/${version.page_id}/versions/${version.id}/rollback`);
   }
 
   return (
@@ -44,7 +46,7 @@ export default function ShowPageVersion({ version }: Props) {
           >
             <Button variant="outline">Kembali</Button>
           </Link>
-          <Button onClick={handleRollback} className="bg-amber-600 hover:bg-amber-700">
+          <Button onClick={() => setShowRollbackConfirm(true)} className="bg-amber-600 hover:bg-amber-700">
             Rollback ke Versi Ini
           </Button>
         </div>
@@ -96,6 +98,14 @@ export default function ShowPageVersion({ version }: Props) {
           </Card>
         </div>
       </div>
+      <ConfirmDialog
+        open={showRollbackConfirm}
+        onOpenChange={setShowRollbackConfirm}
+        onConfirm={handleRollback}
+        title="Rollback Versi"
+        description="Yakin ingin mengembalikan ke versi ini? Perubahan saat ini akan disimpan sebagai versi baru."
+        confirmText="Rollback"
+      />
     </>
   );
 }

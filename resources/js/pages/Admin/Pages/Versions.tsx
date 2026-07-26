@@ -1,7 +1,9 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 
 interface Version {
   id: number;
@@ -32,11 +34,13 @@ interface Props {
 }
 
 export default function PageVersions({ page, versions }: Props) {
+  const [rollbackId, setRollbackId] = useState<number | null>(null);
 
-  function handleRollback(versionId: number) {
-    if (window.confirm('Yakin ingin mengembalikan ke versi ini? Perubahan saat ini akan disimpan sebagai versi baru.')) {
-      router.post(`/dashboard-admin/pages/${page.id}/versions/${versionId}/rollback`);
-    }
+  function handleRollback() {
+    if (!rollbackId) return;
+    router.post(`/dashboard-admin/pages/${page.id}/versions/${rollbackId}/rollback`, {
+      onFinish: () => setRollbackId(null),
+    });
   }
 
   return (
@@ -81,7 +85,7 @@ export default function PageVersions({ page, versions }: Props) {
                       </Link>
                       <span className="text-[#D1D5DB]">|</span>
                       <button
-                        onClick={() => handleRollback(version.id)}
+                        onClick={() => setRollbackId(version.id)}
                         className="text-sm font-medium text-amber-600 hover:underline"
                       >
                         Rollback
@@ -130,6 +134,14 @@ export default function PageVersions({ page, versions }: Props) {
           )}
         </CardContent>
       </Card>
+      <ConfirmDialog
+        open={rollbackId !== null}
+        onOpenChange={(open) => { if (!open) setRollbackId(null); }}
+        onConfirm={handleRollback}
+        title="Rollback Versi"
+        description="Perubahan saat ini akan disimpan sebagai versi baru sebelum rollback. Apakah Anda yakin ingin melanjutkan?"
+        confirmText="Rollback"
+      />
     </>
   );
 }

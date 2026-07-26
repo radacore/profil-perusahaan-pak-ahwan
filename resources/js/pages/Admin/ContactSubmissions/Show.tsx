@@ -1,8 +1,10 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 
 interface Submission {
   id: number;
@@ -47,6 +49,7 @@ function getStatusLabel(status: string) {
 }
 
 export default function ContactSubmissionsShow({ submission }: Props) {
+  const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
 
   function archive() {
     router.put(`/dashboard-admin/contact-submissions/${submission.id}/archive`);
@@ -67,7 +70,7 @@ export default function ContactSubmissionsShow({ submission }: Props) {
         </div>
         <div className="flex items-center gap-2">
           {submission.status !== 'archived' && (
-            <Button variant="outline" onClick={archive} size="sm">
+            <Button variant="outline" onClick={() => setShowArchiveConfirm(true)} size="sm">
               Arsipkan
             </Button>
           )}
@@ -147,6 +150,14 @@ export default function ContactSubmissionsShow({ submission }: Props) {
           </Card>
         </div>
       </div>
+      <ConfirmDialog
+        open={showArchiveConfirm}
+        onOpenChange={setShowArchiveConfirm}
+        onConfirm={archive}
+        title="Arsipkan Pesan"
+        description="Pesan akan dipindahkan ke arsip dan tidak akan muncul di daftar pesan masuk utama."
+        confirmText="Arsipkan"
+      />
     </>
   );
 }
