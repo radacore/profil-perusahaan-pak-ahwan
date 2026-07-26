@@ -1,0 +1,140 @@
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import InputError from '@/components/input-error';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import RichTextEditor from '@/components/rich-text-editor';
+
+interface Page {
+  id: number;
+  title: string;
+  slug: string;
+  content: string;
+  meta_title?: string;
+  meta_description?: string;
+  is_published: boolean;
+}
+
+interface Props {
+  page: Page;
+}
+
+export default function PagesEdit({ page }: Props) {
+  const { flash } = usePage().props as { flash?: { success?: string } };
+  const { data, setData, put, errors, processing } = useForm({
+    title: page.title,
+    content: page.content,
+    meta_title: page.meta_title || '',
+    meta_description: page.meta_description || '',
+    is_published: page.is_published,
+  });
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    put(`/dashboard-admin/pages/${page.id}`);
+  }
+
+  return (
+    <>
+      <Head title={`Edit Halaman: ${page.title}`} />
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-[#1F2937]">Edit Halaman</h1>
+        <p className="mt-1 text-sm text-[#6B7280]">Edit: {page.title}</p>
+      </div>
+
+      {flash?.success && (
+        <Alert className="mb-6 border-green-500 bg-green-50 text-green-800">
+          <AlertTitle>Berhasil</AlertTitle>
+          <AlertDescription>{flash.success}</AlertDescription>
+        </Alert>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Konten Halaman</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-2">
+              <Label htmlFor="title">Judul Halaman</Label>
+              <Input
+                id="title"
+                value={data.title}
+                onChange={(e) => setData('title', e.target.value)}
+                required
+              />
+              <InputError message={errors.title} />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="content">Konten</Label>
+              <RichTextEditor
+                value={data.content}
+                onChange={(value) => setData('content', value)}
+                height={500}
+              />
+              <InputError message={errors.content} />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="is_published"
+                checked={data.is_published}
+                onCheckedChange={(checked) => setData('is_published', checked === true)}
+              />
+              <Label htmlFor="is_published" className="cursor-pointer">Publikasikan halaman ini</Label>
+            </div>
+            <InputError message={errors.is_published} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">SEO / Meta</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-2">
+              <Label htmlFor="meta_title">Meta Title</Label>
+              <Input
+                id="meta_title"
+                value={data.meta_title}
+                onChange={(e) => setData('meta_title', e.target.value)}
+              />
+              <InputError message={errors.meta_title} />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="meta_description">Meta Description</Label>
+              <textarea
+                id="meta_description"
+                rows={3}
+                className="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                value={data.meta_description}
+                onChange={(e) => setData('meta_description', e.target.value)}
+              />
+              <InputError message={errors.meta_description} />
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="flex items-center gap-3">
+          <Button type="submit" disabled={processing}>
+            {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
+          </Button>
+          <Button type="button" variant="outline" onClick={() => window.history.back()}>
+            Batal
+          </Button>
+          <Link
+            href={`/dashboard-admin/pages/${page.id}/versions`}
+            className="ml-auto text-sm font-medium text-[#6B7280] hover:text-[#1E3A8A]"
+          >
+            Lihat Riwayat Versi →
+          </Link>
+        </div>
+      </form>
+    </>
+  );
+}
