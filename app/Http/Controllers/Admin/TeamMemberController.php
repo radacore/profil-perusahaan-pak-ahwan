@@ -41,9 +41,27 @@ class TeamMemberController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
             'linkedin_url' => ['nullable', 'string', 'max:255'],
             'is_published' => ['nullable', 'boolean'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,gif,webp', 'max:5120'],
         ]);
 
         $validated['is_published'] = $validated['is_published'] ?? true;
+
+        if ($request->hasFile('photo')) {
+            $data = $this->imageService->convertToWebp($request->file('photo'), 'team/photos');
+
+            $media = Media::create([
+                'filename' => $data['filename'],
+                'original_filename' => $data['original_filename'],
+                'mime_type' => $data['mime_type'],
+                'file_size' => $data['file_size'],
+                's3_path' => $data['s3_path'],
+                's3_url' => $data['s3_url'],
+                'media_type' => 'image',
+            ]);
+
+            $validated['media_id'] = $media->id;
+        }
+
         TeamMember::create($validated);
 
         return redirect()->route('admin.team.index')->with('success', 'Anggota tim berhasil ditambahkan.');
@@ -52,7 +70,7 @@ class TeamMemberController extends Controller
     public function edit($id): Response
     {
         return Inertia::render('Admin/Team/Edit', [
-            'member' => TeamMember::findOrFail($id),
+            'member' => TeamMember::with('media')->findOrFail($id),
         ]);
     }
 
@@ -68,7 +86,24 @@ class TeamMemberController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
             'linkedin_url' => ['nullable', 'string', 'max:255'],
             'is_published' => ['nullable', 'boolean'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,gif,webp', 'max:5120'],
         ]);
+
+        if ($request->hasFile('photo')) {
+            $data = $this->imageService->convertToWebp($request->file('photo'), 'team/photos');
+
+            $media = Media::create([
+                'filename' => $data['filename'],
+                'original_filename' => $data['original_filename'],
+                'mime_type' => $data['mime_type'],
+                'file_size' => $data['file_size'],
+                's3_path' => $data['s3_path'],
+                's3_url' => $data['s3_url'],
+                'media_type' => 'image',
+            ]);
+
+            $validated['media_id'] = $media->id;
+        }
 
         $member->update($validated);
 

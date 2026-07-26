@@ -46,5 +46,7 @@ class DatabaseSeeder extends Seeder
                 'setting_value' => $value,
             ]);
         }
+
+        $this->call(DummyDataSeeder::class);
     }
 }
