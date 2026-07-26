@@ -29,6 +29,18 @@ use App\Http\Controllers\Admin\SettingController;
 Route::get('/rahasianegara/masuksini', [\App\Http\Controllers\Admin\AuthController::class, 'showLoginForm'])->name('secret.login');
 Route::post('/rahasianegara/masuksini', [\App\Http\Controllers\Admin\AuthController::class, 'login']);
 
+Route::get('/storage/s3/{path}', function (string $path) {
+    $disk = Storage::disk('s3');
+    if (!$disk->exists($path)) {
+        abort(404);
+    }
+    return response()->stream(function () use ($disk, $path) {
+        $stream = $disk->readStream($path);
+        fpassthru($stream);
+        fclose($stream);
+    }, 200, ['Content-Type' => $disk->mimeType($path)]);
+})->where('path', '.*')->name('s3.proxy');
+
 Route::get('/', HomepageController::class)->name('home');
 Route::get('/about', AboutController::class)->name('about');
 Route::get('/services', [PublicServiceController::class, 'index'])->name('services.index');

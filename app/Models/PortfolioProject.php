@@ -34,7 +34,7 @@ class PortfolioProject extends Model
     protected function casts(): array
     {
         return [
-            'project_date' => 'date',
+            'project_date' => 'date:Y-m-d',
         ];
     }
 

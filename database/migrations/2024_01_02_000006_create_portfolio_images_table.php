@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('media_id')->constrained()->cascadeOnDelete();
             $table->integer('display_order')->default(0);
             $table->string('alt_text')->nullable();
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

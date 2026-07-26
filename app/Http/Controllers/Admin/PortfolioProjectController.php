@@ -32,7 +32,7 @@ class PortfolioProjectController extends Controller
                     'title' => $project->title,
                     'slug' => $project->slug,
                     'client_name' => $project->client_name,
-                    'project_date' => $project->project_date,
+                    'project_date' => $project->project_date?->format('Y-m-d'),
                     'is_published' => $project->is_published,
                     'service' => $project->service?->only(['id', 'title']),
                     'created_at' => $project->created_at,
@@ -103,10 +103,13 @@ class PortfolioProjectController extends Controller
     {
         $project = PortfolioProject::with('portfolioImages.media')->findOrFail($id);
 
+        $projectData = $project->toArray();
+        $projectData['project_date'] = $project->project_date?->format('Y-m-d');
+
         return Inertia::render('Admin/Portfolio/Edit', [
-            'project' => $project,
+            'project' => $projectData,
             'services' => Service::orderBy('title')->get(['id', 'title']),
-            'gallery' => $project->portfolioImages()->orderBy('display_order')->get(),
+            'gallery' => $project->portfolioImages->sortBy('display_order')->values(),
         ]);
     }
 

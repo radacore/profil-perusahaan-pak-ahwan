@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class ImageService
 {
@@ -32,28 +33,32 @@ class ImageService
         };
 
         if (!$image) {
-            $path = $file->store($directory, $disk);
+            $opts = $disk === 's3' ? ['disk' => $disk, 'visibility' => 'public'] : $disk;
+            $path = $file->store($directory, $opts);
             return [
                 'filename' => $file->hashName(),
                 'original_filename' => $file->getClientOriginalName(),
                 'mime_type' => $mime,
                 'file_size' => $file->getSize(),
                 's3_path' => $path,
-                's3_url' => Storage::disk($disk)->url($path),
+                's3_url' => $disk === 's3' ? URL::route('s3.proxy', ['path' => $path], false) : Storage::disk($disk)->url($path),
             ];
         }
 
-        if (imageistruecolor($image)) {
-            imagealphablending($image, false);
-            imagesavealpha($image, true);
+        if (!imageistruecolor($image)) {
+            imagepalettetotruecolor($image);
         }
+
+        imagealphablending($image, false);
+        imagesavealpha($image, true);
 
         $tempPath = sys_get_temp_dir() . '/' . $webpFilename;
         imagewebp($image, $tempPath, self::QUALITY);
         imagedestroy($image);
 
         $webpSize = filesize($tempPath);
-        $storedPath = Storage::disk($disk)->putFileAs($directory, new UploadedFile($tempPath, $webpFilename), $webpFilename);
+        $options = $disk === 's3' ? ['visibility' => 'public'] : [];
+        $storedPath = Storage::disk($disk)->putFileAs($directory, new UploadedFile($tempPath, $webpFilename), $webpFilename, $options);
 
         @unlink($tempPath);
 
@@ -63,7 +68,7 @@ class ImageService
             'mime_type' => 'image/webp',
             'file_size' => $webpSize,
             's3_path' => $storedPath,
-            's3_url' => Storage::disk($disk)->url($storedPath),
+            's3_url' => $disk === 's3' ? URL::route('s3.proxy', ['path' => $storedPath], false) : Storage::disk($disk)->url($storedPath),
         ];
     }
 }
