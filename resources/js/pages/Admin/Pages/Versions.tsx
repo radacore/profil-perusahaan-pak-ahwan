@@ -1,4 +1,4 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -32,7 +32,6 @@ interface Props {
 }
 
 export default function PageVersions({ page, versions }: Props) {
-  const { flash } = usePage().props as { flash?: { success?: string } };
 
   function handleRollback(versionId: number) {
     if (window.confirm('Yakin ingin mengembalikan ke versi ini? Perubahan saat ini akan disimpan sebagai versi baru.')) {
@@ -54,12 +53,6 @@ export default function PageVersions({ page, versions }: Props) {
           <Button variant="outline">Kembali ke Edit</Button>
         </Link>
       </div>
-
-      {flash?.success && (
-        <div className="mb-6 rounded-lg border border-green-500 bg-green-50 p-4 text-sm text-green-800">
-          {flash.success}
-        </div>
-      )}
 
       <Card>
         <CardHeader>

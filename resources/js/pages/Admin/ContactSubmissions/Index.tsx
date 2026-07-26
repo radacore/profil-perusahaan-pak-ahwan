@@ -1,8 +1,7 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 
 interface Submission {
@@ -55,7 +54,6 @@ function getStatusLabel(status: string) {
 }
 
 export default function ContactSubmissionsIndex({ submissions }: Props) {
-  const { flash } = usePage().props as { flash?: { success?: string } };
 
   return (
     <>
@@ -66,14 +64,6 @@ export default function ContactSubmissionsIndex({ submissions }: Props) {
           <p className="mt-1 text-sm text-[#6B7280]">Lihat pesan dari pengunjung situs</p>
         </div>
       </div>
-
-      {flash?.success && (
-        <Alert className="mb-6 border-green-500 bg-green-50 text-green-800">
-          <AlertTitle>Berhasil</AlertTitle>
-          <AlertDescription>{flash.success}</AlertDescription>
-        </Alert>
-      )}
-
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Semua Pesan ({submissions.total})</CardTitle>

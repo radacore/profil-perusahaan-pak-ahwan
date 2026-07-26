@@ -1,10 +1,9 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import InputError from '@/components/input-error';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface Settings {
   company_name: string;
@@ -26,7 +25,6 @@ interface Props {
 }
 
 export default function SettingsIndex({ settings }: Props) {
-  const { flash } = usePage().props as { flash?: { success?: string } };
   const { data, setData, put, errors, processing } = useForm({
     company_name: settings.company_name || '',
     company_tagline: settings.company_tagline || '',
@@ -54,14 +52,6 @@ export default function SettingsIndex({ settings }: Props) {
         <h1 className="text-2xl font-bold text-[#1F2937]">Pengaturan</h1>
         <p className="mt-1 text-sm text-[#6B7280]">Kelola pengaturan global situs</p>
       </div>
-
-      {flash?.success && (
-        <Alert className="mb-6 border-green-500 bg-green-50 text-green-800">
-          <AlertTitle>Berhasil</AlertTitle>
-          <AlertDescription>{flash.success}</AlertDescription>
-        </Alert>
-      )}
-
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Company Info */}

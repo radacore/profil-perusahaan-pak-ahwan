@@ -1,7 +1,6 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useState } from 'react';
 
 interface MediaItem {
@@ -27,7 +26,6 @@ function formatFileSize(bytes: number): string {
 }
 
 export default function MediaIndex({ media }: Props) {
-  const { flash } = usePage().props as { flash?: { success?: string } };
   const [isUploading, setIsUploading] = useState(false);
 
   const { data, setData, post, errors, processing } = useForm({
@@ -62,14 +60,6 @@ export default function MediaIndex({ media }: Props) {
           <p className="mt-1 text-sm text-[#6B7280]">Kelola file media</p>
         </div>
       </div>
-
-      {flash?.success && (
-        <Alert className="mb-6 border-green-500 bg-green-50 text-green-800">
-          <AlertTitle>Berhasil</AlertTitle>
-          <AlertDescription>{flash.success}</AlertDescription>
-        </Alert>
-      )}
-
       {/* Upload Form */}
       <Card className="mb-6">
         <CardHeader>

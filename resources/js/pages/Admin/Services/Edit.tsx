@@ -1,11 +1,10 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import InputError from '@/components/input-error';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface Service {
   id: number;
@@ -20,7 +19,6 @@ interface Props {
 }
 
 export default function ServicesEdit({ service }: Props) {
-  const { flash } = usePage().props as { flash?: { success?: string } };
   const { data, setData, put, errors, processing } = useForm({
     title: service.title,
     description: service.description,
@@ -40,14 +38,6 @@ export default function ServicesEdit({ service }: Props) {
         <h1 className="text-2xl font-bold text-[#1F2937]">Edit Layanan</h1>
         <p className="mt-1 text-sm text-[#6B7280]">Edit: {service.title}</p>
       </div>
-
-      {flash?.success && (
-        <Alert className="mb-6 border-green-500 bg-green-50 text-green-800">
-          <AlertTitle>Berhasil</AlertTitle>
-          <AlertDescription>{flash.success}</AlertDescription>
-        </Alert>
-      )}
-
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card>
           <CardHeader>

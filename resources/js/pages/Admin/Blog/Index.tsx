@@ -2,8 +2,6 @@ import { Head, Link, router } from '@inertiajs/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { usePage } from '@inertiajs/react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 
 interface Post {
@@ -30,7 +28,6 @@ interface Props {
 }
 
 export default function BlogIndex({ posts }: Props) {
-  const { flash } = usePage().props as { flash?: { success?: string } };
 
   function handleDelete(id: number) {
     if (window.confirm('Yakin ingin menghapus post ini?')) {
@@ -50,14 +47,6 @@ export default function BlogIndex({ posts }: Props) {
           <Button>Tambah Post</Button>
         </Link>
       </div>
-
-      {flash?.success && (
-        <Alert className="mb-6 border-green-500 bg-green-50 text-green-800">
-          <AlertTitle>Berhasil</AlertTitle>
-          <AlertDescription>{flash.success}</AlertDescription>
-        </Alert>
-      )}
-
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Daftar Post ({posts.total})</CardTitle>

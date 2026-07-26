@@ -1,4 +1,4 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import InputError from '@/components/input-error';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import RichTextEditor from '@/components/rich-text-editor';
 
 interface Category {
@@ -42,7 +41,6 @@ interface Props {
 }
 
 export default function BlogEdit({ post, categories = [] }: Props) {
-  const { flash } = usePage().props as { flash?: { success?: string } };
   const { data, setData, put, errors, processing } = useForm({
     title: post.title,
     content: post.content,
@@ -65,14 +63,6 @@ export default function BlogEdit({ post, categories = [] }: Props) {
         <h1 className="text-2xl font-bold text-[#1F2937]">Edit Post</h1>
         <p className="mt-1 text-sm text-[#6B7280]">Edit: {post.title}</p>
       </div>
-
-      {flash?.success && (
-        <Alert className="mb-6 border-green-500 bg-green-50 text-green-800">
-          <AlertTitle>Berhasil</AlertTitle>
-          <AlertDescription>{flash.success}</AlertDescription>
-        </Alert>
-      )}
-
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card>
           <CardHeader>

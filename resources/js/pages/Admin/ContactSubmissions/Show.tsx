@@ -1,9 +1,8 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface Submission {
   id: number;
@@ -48,7 +47,6 @@ function getStatusLabel(status: string) {
 }
 
 export default function ContactSubmissionsShow({ submission }: Props) {
-  const { flash } = usePage().props as { flash?: { success?: string } };
 
   function archive() {
     router.put(`/dashboard-admin/contact-submissions/${submission.id}/archive`);
@@ -78,14 +76,6 @@ export default function ContactSubmissionsShow({ submission }: Props) {
           </Link>
         </div>
       </div>
-
-      {flash?.success && (
-        <Alert className="mb-6 border-green-500 bg-green-50 text-green-800">
-          <AlertTitle>Berhasil</AlertTitle>
-          <AlertDescription>{flash.success}</AlertDescription>
-        </Alert>
-      )}
-
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <Card>

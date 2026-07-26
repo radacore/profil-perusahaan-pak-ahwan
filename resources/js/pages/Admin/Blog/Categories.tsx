@@ -1,10 +1,9 @@
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 
 interface Category {
@@ -19,7 +18,6 @@ interface Props {
 }
 
 export default function BlogCategories({ categories }: Props) {
-  const { flash } = usePage().props as { flash?: { success?: string } };
   const [name, setName] = useState('');
 
   function handleCreate(e: React.FormEvent) {
@@ -42,14 +40,6 @@ export default function BlogCategories({ categories }: Props) {
         <h1 className="text-2xl font-bold text-[#1F2937]">Kategori Blog</h1>
         <p className="mt-1 text-sm text-[#6B7280]">Kelola kategori untuk artikel blog</p>
       </div>
-
-      {flash?.success && (
-        <Alert className="mb-6 border-green-500 bg-green-50 text-green-800">
-          <AlertTitle>Berhasil</AlertTitle>
-          <AlertDescription>{flash.success}</AlertDescription>
-        </Alert>
-      )}
-
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-1">
           <CardHeader>
