@@ -42,27 +42,39 @@ export default function Homepage({ services, posts, testimonials }: HomepageProp
       {/* Hero Banner */}
       <section className="relative bg-gradient-to-br from-[#1E3A8A] via-[#1E3A8A] to-[#0F172A] text-white">
         <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              {settings.hero_heading || `Selamat Datang di ${companyName}`}
-            </h1>
-            <p className="mt-6 text-lg leading-relaxed text-[#E0F2FE] sm:text-xl">
-              {settings.hero_subtitle || settings.company_tagline || 'Solusi profesional untuk kebutuhan bisnis Anda dengan layanan terpercaya dan inovatif.'}
-            </p>
-            <div className="mt-10 flex flex-wrap gap-4">
-              <Link
-                href={settings.hero_cta_url || '/contact'}
-                className="inline-flex items-center rounded-md bg-[#0D9488] px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#0D9488]/90"
-              >
-                {settings.hero_cta_text || 'Hubungi Kami'}
-              </Link>
-              <Link
-                href={settings.hero_cta_secondary_url || '/services'}
-                className="inline-flex items-center rounded-md border border-white/30 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-              >
-                {settings.hero_cta_secondary_text || 'Lihat Layanan'}
-              </Link>
+          <div className={`${settings.hero_image ? 'grid lg:grid-cols-2 gap-12 items-center' : ''}`}>
+            <div className={settings.hero_image ? '' : 'max-w-3xl'}>
+              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+                {settings.hero_heading || `Selamat Datang di ${companyName}`}
+              </h1>
+              <p className="mt-6 text-lg leading-relaxed text-[#E0F2FE] sm:text-xl">
+                {settings.hero_subtitle || settings.company_tagline || 'Solusi profesional untuk kebutuhan bisnis Anda dengan layanan terpercaya dan inovatif.'}
+              </p>
+              <div className="mt-10 flex flex-wrap gap-4">
+                <Link
+                  href={settings.hero_cta_url || '/contact'}
+                  className="inline-flex items-center rounded-md bg-[#0D9488] px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#0D9488]/90"
+                >
+                  {settings.hero_cta_text || 'Hubungi Kami'}
+                </Link>
+                <Link
+                  href={settings.hero_cta_secondary_url || '/services'}
+                  className="inline-flex items-center rounded-md border border-white/30 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                >
+                  {settings.hero_cta_secondary_text || 'Lihat Layanan'}
+                </Link>
+              </div>
             </div>
+            {settings.hero_image && (
+              <div className="mt-10 lg:mt-0">
+                <img
+                  src={settings.hero_image}
+                  alt="Hero"
+                  className="h-auto w-full rounded-lg object-cover shadow-2xl"
+                  style={{ aspectRatio: '4 / 3' }}
+                />
+              </div>
+            )}
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent" />

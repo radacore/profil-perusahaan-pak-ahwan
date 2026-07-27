@@ -1,9 +1,10 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import InputError from '@/components/input-error';
+import { useRef, useState } from 'react';
 
 interface Settings {
   company_name: string;
@@ -24,6 +25,7 @@ interface Settings {
   hero_cta_url: string;
   hero_cta_secondary_text: string;
   hero_cta_secondary_url: string;
+  hero_image: string;
 }
 
 interface Props {
@@ -58,7 +60,11 @@ export default function SettingsIndex({ settings }: Props) {
   const hero = useForm({
     hero_heading: settings.hero_heading || '',
     hero_subtitle: settings.hero_subtitle || '',
+    hero_image: settings.hero_image || '',
   });
+
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const cta = useForm({
     hero_cta_text: settings.hero_cta_text || '',
@@ -296,6 +302,47 @@ export default function SettingsIndex({ settings }: Props) {
                     placeholder="Solusi profesional untuk kebutuhan bisnis Anda..."
                   />
                   <InputError message={hero.errors.hero_subtitle} />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label>Gambar Hero</Label>
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setUploading(true);
+                      const formData = new FormData();
+                      formData.append('file', file);
+                      router.post('/dashboard-admin/settings/hero-image', formData, {
+                        onFinish: () => { setUploading(false); if (fileRef.current) fileRef.current.value = ''; },
+                      });
+                    }}
+                  />
+                  <div className="flex items-start gap-3">
+                    {settings.hero_image && (
+                      <img
+                        src={settings.hero_image}
+                        alt="Hero"
+                        className="h-20 w-32 rounded border object-cover"
+                      />
+                    )}
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fileRef.current?.click()}
+                        disabled={uploading}
+                      >
+                        {uploading ? 'Mengupload...' : 'Pilih Gambar'}
+                      </Button>
+                      <InputError message="Maks 5MB, akan dikonversi ke WebP" />
+                    </div>
+                  </div>
                 </div>
 
                 <Button type="submit" disabled={hero.processing}>

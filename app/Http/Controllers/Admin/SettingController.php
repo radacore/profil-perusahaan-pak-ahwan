@@ -46,6 +46,7 @@ class SettingController extends Controller
             'hero_cta_url' => ['nullable', 'string', 'max:500'],
             'hero_cta_secondary_text' => ['nullable', 'string', 'max:255'],
             'hero_cta_secondary_url' => ['nullable', 'string', 'max:500'],
+            'hero_image' => ['nullable', 'string', 'max:1000'],
         ]);
 
         foreach ($validated as $key => $value) {
@@ -84,5 +85,19 @@ class SettingController extends Controller
         );
 
         return redirect()->back()->with('success', 'Favicon berhasil diupload.');
+    }
+
+    public function uploadHeroImage(Request $request): RedirectResponse
+    {
+        $request->validate(['file' => ['required', 'image', 'max:5120']]);
+
+        $data = $this->imageService->convertToWebp($request->file('file'), 'settings');
+
+        GlobalSetting::updateOrCreate(
+            ['setting_key' => 'hero_image'],
+            ['setting_value' => $data['s3_url']]
+        );
+
+        return redirect()->back()->with('success', 'Gambar hero berhasil diupload.');
     }
 }

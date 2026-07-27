@@ -33,20 +33,17 @@ Route::post('/rahasianegara/masuksini', [\App\Http\Controllers\Admin\AuthControl
 Route::get('/storage/s3/{path}', function (string $path) {
     try {
         $disk = Storage::disk('s3');
-        if (!$disk->exists($path)) {
+        $stream = $disk->readStream($path);
+        if ($stream === false) {
             abort(404);
         }
         $mime = $disk->mimeType($path);
-        $stream = $disk->readStream($path);
-        if ($stream === false) {
-            abort(500, 'Gagal membaca file.');
-        }
         return response()->stream(function () use ($stream) {
             fpassthru($stream);
             fclose($stream);
-        }, 200, ['Content-Type' => $mime]);
+        }, 200, ['Content-Type' => $mime ?: 'image/webp']);
     } catch (\Exception $e) {
-        abort(500, 'Gagal memuat file.');
+        abort(404);
     }
 })->where('path', '.*')->name('s3.proxy');
 
@@ -121,5 +118,6 @@ Route::prefix($adminPath)->name('admin.')->group(function () {
         Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
         Route::post('/settings/logo', [SettingController::class, 'uploadLogo'])->name('settings.logo');
         Route::post('/settings/favicon', [SettingController::class, 'uploadFavicon'])->name('settings.favicon');
+        Route::post('/settings/hero-image', [SettingController::class, 'uploadHeroImage'])->name('settings.hero-image');
     });
 });
