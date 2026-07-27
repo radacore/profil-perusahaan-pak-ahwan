@@ -1,14 +1,27 @@
 import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
 }
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
+  const { url } = usePage();
   const { auth } = usePage().props;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const settings = (usePage().props as any).settings || {};
+
+  useEffect(() => {
+    function handleScroll() {
+      setScrolled(window.scrollY > 20);
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const isHome = url === '/';
+  const transparent = isHome && !scrolled;
 
   const navLinks = [
     { href: '/', label: 'Beranda' },
@@ -22,10 +35,20 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 border-b border-[#E5E7EB] bg-white">
+      <header
+        className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+          transparent
+            ? 'bg-transparent'
+            : 'border-b border-[#E5E7EB] bg-white shadow-sm'
+        }`}
+      >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-bold text-[#1E3A8A]">
+            <span
+              className={`text-xl font-bold transition-colors duration-300 ${
+                transparent ? 'text-white' : 'text-[#1E3A8A]'
+              }`}
+            >
               {settings.company_name || 'ProfilKorp'}
             </span>
           </Link>
@@ -34,7 +57,11 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-md px-3 py-2 text-sm font-medium text-[#1F2937] transition-colors hover:bg-[#E0F2FE] hover:text-[#1E3A8A]"
+                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors duration-300 ${
+                  transparent
+                    ? 'text-white/80 hover:bg-white/10 hover:text-white'
+                    : 'text-[#1F2937] hover:bg-[#E0F2FE] hover:text-[#1E3A8A]'
+                }`}
               >
                 {link.label}
               </Link>
@@ -42,7 +69,11 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
             {auth?.user && (
               <Link
                 href={'/' + (import.meta.env.VITE_ADMIN_PATH || 'dashboard-admin')}
-                className="ml-2 rounded-md bg-[#1E3A8A] px-4 py-2 text-sm font-medium text-white hover:bg-[#1E3A8A]/90"
+                className={`ml-2 rounded-md px-4 py-2 text-sm font-medium transition-colors duration-300 ${
+                  transparent
+                    ? 'bg-white/20 text-white hover:bg-white/30'
+                    : 'bg-[#1E3A8A] text-white hover:bg-[#1E3A8A]/90'
+                }`}
               >
                 Admin
               </Link>
@@ -50,7 +81,9 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
           </nav>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="rounded-md p-2 text-[#6B7280] hover:bg-[#F3F4F6] md:hidden"
+            className={`rounded-md p-2 transition-colors duration-300 md:hidden ${
+              transparent ? 'text-white hover:bg-white/10' : 'text-[#6B7280] hover:bg-[#F3F4F6]'
+            }`}
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {mobileMenuOpen ? (
