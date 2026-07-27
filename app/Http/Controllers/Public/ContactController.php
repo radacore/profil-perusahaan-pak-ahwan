@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContactSubmission;
-use App\Models\GlobalSetting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -12,9 +11,7 @@ class ContactController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Public/Contact', [
-            'settings' => GlobalSetting::pluck('setting_value', 'setting_key'),
-        ]);
+        return Inertia::render('Public/Contact');
     }
 
     public function store(Request $request)
