@@ -66,11 +66,13 @@ export default function Homepage({ services, posts, testimonials }: HomepageProp
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
                 {settings.hero_heading || `Selamat Datang di ${companyName}`}
               </h1>
-              <p
-                className={`mt-6 text-lg leading-relaxed text-[#E0F2FE] sm:text-xl transition-opacity duration-300 ${fade ? 'opacity-100' : 'opacity-0'}`}
-              >
-                {subtitle}
-              </p>
+              <div className="mt-6 min-h-[7.5rem] sm:min-h-[8.75rem]">
+                <p
+                  className={`text-lg leading-relaxed text-[#E0F2FE] sm:text-xl transition-opacity duration-300 ${fade ? 'opacity-100' : 'opacity-0'}`}
+                >
+                  {subtitle}
+                </p>
+              </div>
               <div className="mt-10 flex flex-wrap gap-4">
                 <Link
                   href={settings.hero_cta_url || '/contact'}
