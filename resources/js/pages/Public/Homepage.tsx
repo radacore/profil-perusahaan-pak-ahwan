@@ -44,23 +44,23 @@ export default function Homepage({ services, posts, testimonials }: HomepageProp
         <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              Selamat Datang di {companyName}
+              {settings.hero_heading || `Selamat Datang di ${companyName}`}
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-[#E0F2FE] sm:text-xl">
-              {settings.company_tagline || 'Solusi profesional untuk kebutuhan bisnis Anda dengan layanan terpercaya dan inovatif.'}
+              {settings.hero_subtitle || settings.company_tagline || 'Solusi profesional untuk kebutuhan bisnis Anda dengan layanan terpercaya dan inovatif.'}
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
-                href="/contact"
+                href={settings.hero_cta_url || '/contact'}
                 className="inline-flex items-center rounded-md bg-[#0D9488] px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#0D9488]/90"
               >
-                Hubungi Kami
+                {settings.hero_cta_text || 'Hubungi Kami'}
               </Link>
               <Link
-                href="/services"
+                href={settings.hero_cta_secondary_url || '/services'}
                 className="inline-flex items-center rounded-md border border-white/30 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
               >
-                Lihat Layanan
+                {settings.hero_cta_secondary_text || 'Lihat Layanan'}
               </Link>
             </div>
           </div>

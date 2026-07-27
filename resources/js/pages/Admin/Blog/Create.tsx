@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
@@ -36,8 +35,6 @@ export default function BlogCreate({ categories = [] }: Props) {
     author: '',
     category_id: '',
     status: 'draft',
-    meta_title: '',
-    meta_description: '',
   });
 
   function handleSubmit(e: React.FormEvent) {
@@ -137,35 +134,6 @@ export default function BlogCreate({ categories = [] }: Props) {
                     </SelectContent>
                   </Select>
                   <InputError message={errors.status} />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">SEO / Meta</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="meta_title">Meta Title</Label>
-                  <Input
-                    id="meta_title"
-                    value={data.meta_title}
-                    onChange={(e) => setData('meta_title', e.target.value)}
-                  />
-                  <InputError message={errors.meta_title} />
-                </div>
-
-                <div className="grid gap-2">
-                  <Label htmlFor="meta_description">Meta Description</Label>
-                  <textarea
-                    id="meta_description"
-                    rows={3}
-                    className="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                    value={data.meta_description}
-                    onChange={(e) => setData('meta_description', e.target.value)}
-                  />
-                  <InputError message={errors.meta_description} />
                 </div>
               </CardContent>
             </Card>

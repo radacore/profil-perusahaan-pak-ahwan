@@ -28,11 +28,27 @@ class SettingController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'settings' => ['required', 'array'],
-            'settings.*' => ['nullable', 'string'],
+            'company_name' => ['nullable', 'string', 'max:255'],
+            'company_tagline' => ['nullable', 'string', 'max:500'],
+            'company_description' => ['nullable', 'string', 'max:2000'],
+            'contact_email' => ['nullable', 'email', 'max:255'],
+            'contact_phone' => ['nullable', 'string', 'max:50'],
+            'contact_address' => ['nullable', 'string', 'max:1000'],
+            'social_facebook' => ['nullable', 'string', 'max:500'],
+            'social_instagram' => ['nullable', 'string', 'max:500'],
+            'social_linkedin' => ['nullable', 'string', 'max:500'],
+            'social_twitter' => ['nullable', 'string', 'max:500'],
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:500'],
+            'hero_heading' => ['nullable', 'string', 'max:500'],
+            'hero_subtitle' => ['nullable', 'string', 'max:2000'],
+            'hero_cta_text' => ['nullable', 'string', 'max:255'],
+            'hero_cta_url' => ['nullable', 'string', 'max:500'],
+            'hero_cta_secondary_text' => ['nullable', 'string', 'max:255'],
+            'hero_cta_secondary_url' => ['nullable', 'string', 'max:500'],
         ]);
 
-        foreach ($validated['settings'] as $key => $value) {
+        foreach ($validated as $key => $value) {
             GlobalSetting::updateOrCreate(
                 ['setting_key' => $key],
                 ['setting_value' => $value ?? '']

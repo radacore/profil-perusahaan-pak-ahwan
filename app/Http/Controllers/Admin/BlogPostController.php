@@ -64,8 +64,6 @@ class BlogPostController extends Controller
             'blog_category_id' => ['nullable', 'exists:blog_categories,id'],
             'tags' => ['nullable', 'array'],
             'tags.*.id' => ['nullable', 'exists:blog_tags,id'],
-            'meta_title' => ['nullable', 'string', 'max:255'],
-            'meta_description' => ['nullable', 'string', 'max:160'],
         ]);
 
         if (empty($validated['slug'])) {
@@ -79,8 +77,8 @@ class BlogPostController extends Controller
             'author' => $validated['author'],
             'status' => $validated['status'],
             'blog_category_id' => $validated['blog_category_id'] ?? null,
-            'meta_title' => $validated['meta_title'] ?? null,
-            'meta_description' => $validated['meta_description'] ?? null,
+            'meta_title' => str($validated['title'])->limit(60),
+            'meta_description' => str(strip_tags($validated['content']))->limit(160),
             'published_at' => $validated['status'] === 'published' ? now() : null,
         ]);
 
@@ -116,8 +114,6 @@ class BlogPostController extends Controller
             'blog_category_id' => ['nullable', 'exists:blog_categories,id'],
             'tags' => ['nullable', 'array'],
             'tags.*.id' => ['nullable', 'exists:blog_tags,id'],
-            'meta_title' => ['nullable', 'string', 'max:255'],
-            'meta_description' => ['nullable', 'string', 'max:160'],
         ]);
 
         if (empty($validated['slug'])) {
@@ -131,8 +127,8 @@ class BlogPostController extends Controller
             'author' => $validated['author'],
             'status' => $validated['status'],
             'blog_category_id' => $validated['blog_category_id'] ?? null,
-            'meta_title' => $validated['meta_title'] ?? null,
-            'meta_description' => $validated['meta_description'] ?? null,
+            'meta_title' => str($validated['title'])->limit(60),
+            'meta_description' => str(strip_tags($validated['content']))->limit(160),
             'published_at' => $validated['status'] === 'published' && !$post->published_at ? now() : $post->published_at,
         ]);
 
