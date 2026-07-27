@@ -12,6 +12,9 @@ interface Page {
   title: string;
   slug: string;
   content: string;
+  mission?: string;
+  vision?: string;
+  values?: string[];
   meta_title?: string;
   meta_description?: string;
   is_published: boolean;
@@ -25,10 +28,27 @@ export default function PagesEdit({ page }: Props) {
   const { data, setData, put, errors, processing } = useForm({
     title: page.title,
     content: page.content,
+    mission: page.mission || '',
+    vision: page.vision || '',
+    values: page.values || [],
     meta_title: page.meta_title || '',
     meta_description: page.meta_description || '',
     is_published: page.is_published,
   });
+
+  function addValue() {
+    setData('values', [...data.values, '']);
+  }
+
+  function removeValue(index: number) {
+    setData('values', data.values.filter((_, i) => i !== index));
+  }
+
+  function updateValue(index: number, value: string) {
+    const updated = [...data.values];
+    updated[index] = value;
+    setData('values', updated);
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -80,6 +100,65 @@ export default function PagesEdit({ page }: Props) {
                   <Label htmlFor="is_published" className="cursor-pointer">Publikasikan halaman ini</Label>
                 </div>
                 <InputError message={errors.is_published} />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Misi & Visi</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="mission">Misi</Label>
+                  <textarea
+                    id="mission"
+                    rows={4}
+                    className="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                    value={data.mission}
+                    onChange={(e) => setData('mission', e.target.value)}
+                  />
+                  <InputError message={errors.mission} />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="vision">Visi</Label>
+                  <textarea
+                    id="vision"
+                    rows={4}
+                    className="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                    value={data.vision}
+                    onChange={(e) => setData('vision', e.target.value)}
+                  />
+                  <InputError message={errors.vision} />
+                </div>
+
+                <div className="grid gap-3">
+                  <div className="flex items-center justify-between">
+                    <Label>Nilai-Nilai</Label>
+                    <Button type="button" variant="outline" size="sm" onClick={addValue}>
+                      + Tambah Nilai
+                    </Button>
+                  </div>
+                  {data.values.map((value, index) => (
+                    <div key={index} className="flex items-start gap-2">
+                      <Input
+                        value={value}
+                        onChange={(e) => updateValue(index, e.target.value)}
+                        placeholder={`Nilai #${index + 1}`}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeValue(index)}
+                        className="shrink-0 text-red-500 hover:text-red-700"
+                      >
+                        Hapus
+                      </Button>
+                    </div>
+                  ))}
+                  <InputError message={errors.values} />
+                </div>
               </CardContent>
             </Card>
           </div>

@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $slug
  * @property string $title
  * @property string|null $content
+ * @property string|null $mission
+ * @property string|null $vision
+ * @property array|null $values
  * @property string|null $meta_title
  * @property string|null $meta_description
  * @property string|null $meta_og_image
@@ -24,6 +27,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'slug',
     'title',
     'content',
+    'mission',
+    'vision',
+    'values',
     'meta_title',
     'meta_description',
     'meta_og_image',
@@ -33,6 +39,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 ])]
 class Page extends Model
 {
+    protected function casts(): array
+    {
+        return [
+            'values' => 'array',
+        ];
+    }
+
     public function contentVersions(): HasMany
     {
         return $this->hasMany(ContentVersion::class, 'page_id');

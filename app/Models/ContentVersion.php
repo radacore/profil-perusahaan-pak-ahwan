@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $page_id
  * @property string|null $content
+ * @property string|null $mission
+ * @property string|null $vision
+ * @property string|null $values
  * @property string|null $meta_title
  * @property string|null $meta_description
  * @property int|null $admin_id
@@ -20,6 +23,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable([
     'page_id',
     'content',
+    'mission',
+    'vision',
+    'values',
     'meta_title',
     'meta_description',
     'admin_id',

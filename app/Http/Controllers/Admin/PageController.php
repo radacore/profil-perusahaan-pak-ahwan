@@ -38,6 +38,10 @@ class PageController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
+            'mission' => ['nullable', 'string'],
+            'vision' => ['nullable', 'string'],
+            'values' => ['nullable', 'array'],
+            'values.*' => ['string', 'max:255'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:160'],
         ]);
@@ -47,6 +51,9 @@ class PageController extends Controller
         ContentVersion::create([
             'page_id' => $page->id,
             'content' => $page->content,
+            'mission' => $page->mission,
+            'vision' => $page->vision,
+            'values' => $page->values ? json_encode($page->values) : null,
             'meta_title' => $page->meta_title,
             'meta_description' => $page->meta_description,
             'admin_id' => auth()->id(),
@@ -91,6 +98,9 @@ class PageController extends Controller
         ContentVersion::create([
             'page_id' => $page->id,
             'content' => $page->content,
+            'mission' => $page->mission,
+            'vision' => $page->vision,
+            'values' => $page->values ? json_encode($page->values) : null,
             'meta_title' => $page->meta_title,
             'meta_description' => $page->meta_description,
             'admin_id' => auth()->id(),
@@ -99,6 +109,9 @@ class PageController extends Controller
 
         $page->update([
             'content' => $version->content,
+            'mission' => $version->mission,
+            'vision' => $version->vision,
+            'values' => $version->values ? json_decode($version->values, true) : null,
             'meta_title' => $version->meta_title,
             'meta_description' => $version->meta_description,
         ]);

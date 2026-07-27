@@ -8,6 +8,9 @@ import { ConfirmDialog } from '@/components/confirm-dialog';
 interface Version {
   id: number;
   content: string;
+  mission: string | null;
+  vision: string | null;
+  values: string | null;
   meta_title: string | null;
   meta_description: string | null;
   change_notes: string | null;
@@ -74,6 +77,41 @@ export default function ShowPageVersion({ version }: Props) {
         </div>
 
         <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Misi & Visi</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {version.mission && (
+                <div>
+                  <h4 className="mb-1 text-xs font-semibold uppercase text-[#6B7280]">Misi</h4>
+                  <p className="text-sm whitespace-pre-wrap">{version.mission}</p>
+                </div>
+              )}
+              {version.vision && (
+                <div>
+                  <h4 className="mb-1 text-xs font-semibold uppercase text-[#6B7280]">Visi</h4>
+                  <p className="text-sm whitespace-pre-wrap">{version.vision}</p>
+                </div>
+              )}
+              {version.values && (() => {
+                const parsed = JSON.parse(version.values);
+                return Array.isArray(parsed) && parsed.length > 0 ? (
+                  <div>
+                    <h4 className="mb-1 text-xs font-semibold uppercase text-[#6B7280]">Nilai-Nilai</h4>
+                    <ul className="list-disc list-inside text-sm space-y-1">
+                      {parsed.map((v: string, i: number) => (
+                        <li key={i}>{v}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null;
+              })()}
+              {!version.mission && !version.vision && !version.values && (
+                <p className="text-sm text-[#6B7280]">Tidak ada data.</p>
+              )}
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Meta</CardTitle>
