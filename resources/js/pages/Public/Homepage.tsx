@@ -1,4 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 
 interface Service {
   id: number;
@@ -35,20 +36,40 @@ export default function Homepage({ services, posts, testimonials }: HomepageProp
   const settings = (usePage().props as any).settings || {};
   const companyName = settings.company_name || 'ProfilKorp';
 
+  const subtitles = [settings.hero_subtitle_1, settings.hero_subtitle_2, settings.hero_subtitle_3].filter(Boolean);
+  const [subIndex, setSubIndex] = useState(0);
+  const [fade, setFade] = useState(true);
+
+  useEffect(() => {
+    if (subtitles.length <= 1) return;
+    const interval = setInterval(() => {
+      setFade(false);
+      setTimeout(() => {
+        setSubIndex((i) => (i + 1) % subtitles.length);
+        setFade(true);
+      }, 300);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [subtitles.length]);
+
+  const subtitle = subtitles[subIndex] || settings.company_tagline || 'Solusi profesional untuk kebutuhan bisnis Anda dengan layanan terpercaya dan inovatif.';
+
   return (
     <>
       <Head title={`Selamat Datang di ${companyName}`} />
 
       {/* Hero Banner */}
-      <section className="relative bg-gradient-to-br from-[#1E3A8A] via-[#1E3A8A] to-[#0F172A] text-white">
-        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+      <section className="relative flex min-h-screen items-center bg-gradient-to-br from-[#1E3A8A] via-[#1E3A8A] to-[#0F172A] text-white">
+        <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className={`${settings.hero_image ? 'grid lg:grid-cols-2 gap-12 items-center' : ''}`}>
             <div className={settings.hero_image ? '' : 'max-w-3xl'}>
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
                 {settings.hero_heading || `Selamat Datang di ${companyName}`}
               </h1>
-              <p className="mt-6 text-lg leading-relaxed text-[#E0F2FE] sm:text-xl">
-                {settings.hero_subtitle || settings.company_tagline || 'Solusi profesional untuk kebutuhan bisnis Anda dengan layanan terpercaya dan inovatif.'}
+              <p
+                className={`mt-6 text-lg leading-relaxed text-[#E0F2FE] sm:text-xl transition-opacity duration-300 ${fade ? 'opacity-100' : 'opacity-0'}`}
+              >
+                {subtitle}
               </p>
               <div className="mt-10 flex flex-wrap gap-4">
                 <Link

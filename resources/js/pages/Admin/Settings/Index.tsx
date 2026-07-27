@@ -20,7 +20,9 @@ interface Settings {
   meta_title: string;
   meta_description: string;
   hero_heading: string;
-  hero_subtitle: string;
+  hero_subtitle_1: string;
+  hero_subtitle_2: string;
+  hero_subtitle_3: string;
   hero_cta_text: string;
   hero_cta_url: string;
   hero_cta_secondary_text: string;
@@ -59,7 +61,9 @@ export default function SettingsIndex({ settings }: Props) {
 
   const hero = useForm({
     hero_heading: settings.hero_heading || '',
-    hero_subtitle: settings.hero_subtitle || '',
+    hero_subtitle_1: settings.hero_subtitle_1 || '',
+    hero_subtitle_2: settings.hero_subtitle_2 || '',
+    hero_subtitle_3: settings.hero_subtitle_3 || '',
     hero_image: settings.hero_image || '',
   });
 
@@ -292,16 +296,42 @@ export default function SettingsIndex({ settings }: Props) {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="hero_subtitle">Subtitle Hero</Label>
+                  <Label htmlFor="hero_subtitle_1">Subtitle 1</Label>
                   <textarea
-                    id="hero_subtitle"
-                    rows={3}
+                    id="hero_subtitle_1"
+                    rows={2}
                     className="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                    value={hero.data.hero_subtitle}
-                    onChange={(e) => hero.setData('hero_subtitle', e.target.value)}
-                    placeholder="Solusi profesional untuk kebutuhan bisnis Anda..."
+                    value={hero.data.hero_subtitle_1}
+                    onChange={(e) => hero.setData('hero_subtitle_1', e.target.value)}
+                    placeholder="Konsultasi, pengembangan website, maintenance..."
                   />
-                  <InputError message={hero.errors.hero_subtitle} />
+                  <InputError message={hero.errors.hero_subtitle_1} />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="hero_subtitle_2">Subtitle 2</Label>
+                  <textarea
+                    id="hero_subtitle_2"
+                    rows={2}
+                    className="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                    value={hero.data.hero_subtitle_2}
+                    onChange={(e) => hero.setData('hero_subtitle_2', e.target.value)}
+                    placeholder="Pengadaan perangkat IT, CCTV, dan jaringan..."
+                  />
+                  <InputError message={hero.errors.hero_subtitle_2} />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="hero_subtitle_3">Subtitle 3</Label>
+                  <textarea
+                    id="hero_subtitle_3"
+                    rows={2}
+                    className="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                    value={hero.data.hero_subtitle_3}
+                    onChange={(e) => hero.setData('hero_subtitle_3', e.target.value)}
+                    placeholder="Solusi IT terpadu untuk bisnis Anda..."
+                  />
+                  <InputError message={hero.errors.hero_subtitle_3} />
                 </div>
 
                 <div className="grid gap-2">
