@@ -65,7 +65,7 @@ export default function AdminDashboard({ stats, quick_stats, recent_posts, recen
     { label: 'Total Testimoni', value: stats.total_testimonials, icon: Star },
     { label: 'Total Media', value: stats.total_media, icon: Image },
     { label: 'Total Pesan', value: stats.total_submissions, icon: Mail },
-    { label: 'Total Halaman', value: stats.total_pages, icon: File },
+    { label: 'Halaman About', value: stats.total_pages, icon: File },
   ];
 
   const needsAttention =

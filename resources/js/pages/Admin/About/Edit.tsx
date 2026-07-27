@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,7 +24,7 @@ interface Props {
   page: Page;
 }
 
-export default function PagesEdit({ page }: Props) {
+export default function AboutEdit({ page }: Props) {
   const { data, setData, put, errors, processing } = useForm({
     title: page.title,
     content: page.content,
@@ -35,6 +35,11 @@ export default function PagesEdit({ page }: Props) {
     meta_description: page.meta_description || '',
     is_published: page.is_published,
   });
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    put('/dashboard-admin/tentang');
+  }
 
   function addValue() {
     setData('values', [...data.values, '']);
@@ -50,24 +55,19 @@ export default function PagesEdit({ page }: Props) {
     setData('values', updated);
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    put(`/dashboard-admin/pages/${page.id}`);
-  }
-
   return (
     <>
-      <Head title={`Edit Halaman: ${page.title}`} />
+      <Head title="Edit Halaman About" />
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#1F2937]">Edit Halaman</h1>
-        <p className="mt-1 text-sm text-[#6B7280]">Edit: {page.title}</p>
+        <h1 className="text-2xl font-bold text-[#1F2937]">Tentang Kami</h1>
+        <p className="mt-1 text-sm text-[#6B7280]">Kelola halaman About perusahaan</p>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
           <div className="lg:col-span-3 space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Konten Halaman</CardTitle>
+                <CardTitle className="text-lg">Konten</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid gap-2">
@@ -202,12 +202,6 @@ export default function PagesEdit({ page }: Props) {
           <Button type="button" variant="outline" onClick={() => window.history.back()}>
             Batal
           </Button>
-          <Link
-            href={`/dashboard-admin/pages/${page.id}/versions`}
-            className="ml-auto text-sm font-medium text-[#6B7280] hover:text-[#1E3A8A]"
-          >
-            Lihat Riwayat Versi →
-          </Link>
         </div>
       </form>
     </>

@@ -33,7 +33,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navItems = [
     { href: adminPath, label: 'Dashboard', key: 'dashboard' },
-    { href: `${adminPath}/pages`, label: 'Halaman', key: 'pages' },
+    { href: `${adminPath}/tentang`, label: 'Tentang', key: 'pages' },
     { href: `${adminPath}/blog`, label: 'Blog', key: 'blog' },
     { href: `${adminPath}/blog-categories`, label: 'Kategori Blog', key: 'categories' },
     { href: `${adminPath}/blog-tags`, label: 'Tag Blog', key: 'tags' },

@@ -10,7 +10,7 @@ use App\Http\Controllers\Public\BlogController as PublicBlogController;
 use App\Http\Controllers\Public\ContactController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\AboutController as AdminAboutController;
 use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\PortfolioProjectController;
@@ -71,12 +71,8 @@ Route::prefix($adminPath)->name('admin.')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-        Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
-        Route::get('/pages/{slug}/edit', [PageController::class, 'edit'])->name('pages.edit');
-        Route::put('/pages/{id}', [PageController::class, 'update'])->name('pages.update');
-        Route::get('/pages/{id}/versions', [PageController::class, 'versions'])->name('pages.versions');
-        Route::get('/pages/{id}/versions/{versionId}', [PageController::class, 'showVersion'])->name('pages.versions.show');
-        Route::post('/pages/{id}/versions/{versionId}/rollback', [PageController::class, 'rollback'])->name('pages.versions.rollback');
+        Route::get('/tentang', [AdminAboutController::class, 'edit'])->name('about.edit');
+        Route::put('/tentang', [AdminAboutController::class, 'update'])->name('about.update');
 
         Route::resource('blog', BlogPostController::class)->except(['show']);
         Route::post('/blog/{id}/featured-image', [BlogPostController::class, 'uploadFeaturedImage'])->name('blog.featured-image');
