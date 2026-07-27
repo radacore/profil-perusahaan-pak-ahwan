@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { FileText, Briefcase, Settings, Users, Star, Image, Mail, File } from 'lucide-react';
+import { FileText, Briefcase, Settings, Users, Star, Image, Mail } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
@@ -12,7 +12,6 @@ interface Stats {
   total_testimonials: number;
   total_media: number;
   total_submissions: number;
-  total_pages: number;
 }
 
 interface QuickStats {
@@ -65,7 +64,6 @@ export default function AdminDashboard({ stats, quick_stats, recent_posts, recen
     { label: 'Total Testimoni', value: stats.total_testimonials, icon: Star },
     { label: 'Total Media', value: stats.total_media, icon: Image },
     { label: 'Total Pesan', value: stats.total_submissions, icon: Mail },
-    { label: 'Halaman About', value: stats.total_pages, icon: File },
   ];
 
   const needsAttention =

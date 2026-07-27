@@ -18,6 +18,7 @@ const icons: Record<string, JSX.Element> = {
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const { url } = usePage();
   const { auth } = usePage().props as { auth?: { user?: { name?: string } } };
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
@@ -70,7 +71,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <nav className="flex-1 overflow-y-auto px-2 py-4">
           {navItems.map((item) => {
-            const isActive = typeof window !== 'undefined' && window.location.pathname === item.href;
+            const isActive = url === item.href;
             return (
               <Link
                 key={item.href}

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
 use App\Models\ContactSubmission;
 use App\Models\Media;
-use App\Models\Page;
 use App\Models\PortfolioProject;
 use App\Models\Service;
 use App\Models\TeamMember;
@@ -31,7 +30,6 @@ class DashboardController extends Controller
                 'total_testimonials' => Testimonial::count(),
                 'total_media' => Media::count(),
                 'total_submissions' => ContactSubmission::count(),
-                'total_pages' => Page::count(),
             ],
             'quick_stats' => [
                 'draft_posts' => BlogPost::where('status', 'draft')->count(),

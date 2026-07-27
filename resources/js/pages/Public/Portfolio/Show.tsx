@@ -1,4 +1,10 @@
 import { Head, Link } from '@inertiajs/react';
+import ImageCarousel from '@/components/image-carousel';
+
+interface CarouselImage {
+  url: string;
+  alt: string;
+}
 
 interface PortfolioDetail {
   id: number;
@@ -7,8 +13,7 @@ interface PortfolioDetail {
   description: string;
   client: string;
   project_date: string;
-  thumbnail: string | null;
-  images: string[];
+  carousel: CarouselImage[];
 }
 
 interface PortfolioShowProps {
@@ -20,7 +25,6 @@ export default function PortfolioShow({ project }: PortfolioShowProps) {
     <>
       <Head title={project.title} />
 
-      {/* Page Header */}
       <section className="bg-gradient-to-br from-[#1E3A8A] to-[#0F172A] text-white">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
@@ -36,43 +40,21 @@ export default function PortfolioShow({ project }: PortfolioShowProps) {
         </div>
       </section>
 
-      {/* Project Detail */}
       <section className="bg-white py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-3">
-            {/* Main Content */}
             <div className="lg:col-span-2">
-              {/* Image Gallery */}
-              {project.images && project.images.length > 0 && (
-                <div className="mb-8 grid gap-4 sm:grid-cols-2">
-                  {project.thumbnail && (
-                    <div className="sm:col-span-2 overflow-hidden rounded-lg">
-                      <img
-                        src={project.thumbnail}
-                        alt={project.title}
-                        className="h-80 w-full object-cover"
-                      />
-                    </div>
-                  )}
-                  {project.images.map((image, index) => (
-                    <div key={index} className="overflow-hidden rounded-lg">
-                      <img
-                        src={image}
-                        alt={`${project.title} - ${index + 1}`}
-                        className="h-56 w-full object-cover"
-                      />
-                    </div>
-                  ))}
+              {project.carousel && project.carousel.length > 0 && (
+                <div className="mb-8">
+                  <ImageCarousel images={project.carousel} />
                 </div>
               )}
 
-              {/* Description */}
               <div className="prose prose-lg max-w-none text-[#1F2937]">
                 <div dangerouslySetInnerHTML={{ __html: project.description }} />
               </div>
             </div>
 
-            {/* Sidebar */}
             <div className="lg:col-span-1">
               <div className="sticky top-24 rounded-lg border border-[#E5E7EB] bg-[#F3F4F6] p-6">
                 <h3 className="text-lg font-semibold text-[#1F2937]">Informasi Proyek</h3>

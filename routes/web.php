@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Public\HomepageController;
 use App\Http\Controllers\Public\AboutController;
 use App\Http\Controllers\Public\ServiceController as PublicServiceController;
@@ -30,15 +31,23 @@ Route::get('/rahasianegara/masuksini', [\App\Http\Controllers\Admin\AuthControll
 Route::post('/rahasianegara/masuksini', [\App\Http\Controllers\Admin\AuthController::class, 'login']);
 
 Route::get('/storage/s3/{path}', function (string $path) {
-    $disk = Storage::disk('s3');
-    if (!$disk->exists($path)) {
-        abort(404);
-    }
-    return response()->stream(function () use ($disk, $path) {
+    try {
+        $disk = Storage::disk('s3');
+        if (!$disk->exists($path)) {
+            abort(404);
+        }
+        $mime = $disk->mimeType($path);
         $stream = $disk->readStream($path);
-        fpassthru($stream);
-        fclose($stream);
-    }, 200, ['Content-Type' => $disk->mimeType($path)]);
+        if ($stream === false) {
+            abort(500, 'Gagal membaca file.');
+        }
+        return response()->stream(function () use ($stream) {
+            fpassthru($stream);
+            fclose($stream);
+        }, 200, ['Content-Type' => $mime]);
+    } catch (\Exception $e) {
+        abort(500, 'Gagal memuat file.');
+    }
 })->where('path', '.*')->name('s3.proxy');
 
 Route::get('/', HomepageController::class)->name('home');

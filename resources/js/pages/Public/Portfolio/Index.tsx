@@ -17,8 +17,14 @@ interface PortfolioProject {
   service: Service | null;
 }
 
+interface PaginatedProjects {
+  data: PortfolioProject[];
+  current_page: number;
+  last_page: number;
+}
+
 interface PortfolioIndexProps {
-  projects: PortfolioProject[];
+  projects: PaginatedProjects;
   services: Service[];
 }
 
@@ -28,8 +34,8 @@ export default function PortfolioIndex({ projects, services }: PortfolioIndexPro
 
   const filteredProjects =
     activeFilter === 'all'
-      ? projects
-      : projects.filter((p) => p.service?.slug === activeFilter);
+      ? projects.data
+      : projects.data.filter((p) => p.service?.slug === activeFilter);
 
   return (
     <>
@@ -117,6 +123,27 @@ export default function PortfolioIndex({ projects, services }: PortfolioIndexPro
           ) : (
             <div className="py-20 text-center">
               <p className="text-lg text-[#6B7280]">Tidak ada proyek untuk kategori ini.</p>
+            </div>
+          )}
+
+          {projects.last_page > 1 && (
+            <div className="mt-8 flex items-center justify-center gap-2">
+              {projects.current_page > 1 && (
+                <Link
+                  href={`/portfolio?page=${projects.current_page - 1}`}
+                  className="rounded-md border border-[#E5E7EB] px-4 py-2 text-sm text-[#6B7280] hover:bg-[#F3F4F6]"
+                >
+                  Sebelumnya
+                </Link>
+              )}
+              {projects.current_page < projects.last_page && (
+                <Link
+                  href={`/portfolio?page=${projects.current_page + 1}`}
+                  className="rounded-md border border-[#E5E7EB] px-4 py-2 text-sm text-[#6B7280] hover:bg-[#F3F4F6]"
+                >
+                  Selanjutnya
+                </Link>
+              )}
             </div>
           )}
         </div>

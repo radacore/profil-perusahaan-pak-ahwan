@@ -21,7 +21,8 @@ class PortfolioController extends Controller
                     'title' => $project->title,
                     'slug' => $project->slug,
                     'description' => $project->description,
-                    'client_name' => $project->client_name,
+                    'thumbnail' => $project->thumbnail_url ?: $project->portfolioImages->first()?->media?->s3_url,
+                    'client' => $project->client_name,
                     'project_date' => $project->project_date,
                     'service' => $project->service,
                     'created_at' => $project->created_at,
@@ -36,12 +37,30 @@ class PortfolioController extends Controller
     {
         $project = PortfolioProject::where('slug', $slug)
             ->where('is_published', true)
-            ->with(['portfolioImages', 'service'])
+            ->with(['portfolioImages.media', 'service'])
             ->firstOrFail();
 
+        $images = $project->portfolioImages
+            ->sortBy('display_order')
+            ->map(fn ($img) => ['url' => $img->media?->s3_url, 'alt' => $img->alt_text ?: $project->title])
+            ->filter(fn ($item) => $item['url'])
+            ->values()
+            ->toArray();
+
+        if ($project->thumbnail_url) {
+            array_unshift($images, ['url' => $project->thumbnail_url, 'alt' => $project->title]);
+        }
+
         return Inertia::render('Public/Portfolio/Show', [
-            'project' => $project,
-            'gallery' => $project->portfolioImages()->orderBy('display_order')->get(),
+            'project' => [
+                'id' => $project->id,
+                'title' => $project->title,
+                'slug' => $project->slug,
+                'description' => $project->description,
+                'client' => $project->client_name,
+                'project_date' => $project->project_date,
+                'carousel' => $images,
+            ],
         ]);
     }
 }

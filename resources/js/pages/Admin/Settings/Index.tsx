@@ -81,7 +81,7 @@ export default function SettingsIndex({ settings }: Props) {
               <CardHeader>
                 <CardTitle className="text-lg">Informasi Perusahaan</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 pt-4">
                 <div className="grid gap-2">
                   <Label htmlFor="company_name">Nama Perusahaan</Label>
                   <Input
@@ -126,7 +126,7 @@ export default function SettingsIndex({ settings }: Props) {
               <CardHeader>
                 <CardTitle className="text-lg">Kontak</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 pt-4">
                 <div className="grid gap-2">
                   <Label htmlFor="contact_email">Email Kontak</Label>
                   <Input
@@ -175,7 +175,7 @@ export default function SettingsIndex({ settings }: Props) {
               <CardHeader>
                 <CardTitle className="text-lg">Media Sosial</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 pt-4">
                 <div className="grid gap-2">
                   <Label htmlFor="social_facebook">Facebook</Label>
                   <Input
@@ -236,7 +236,7 @@ export default function SettingsIndex({ settings }: Props) {
               <CardHeader>
                 <CardTitle className="text-lg">SEO Global</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 pt-4">
                 <div className="grid gap-2">
                   <Label htmlFor="meta_title">Meta Title Default</Label>
                   <Input
@@ -273,7 +273,7 @@ export default function SettingsIndex({ settings }: Props) {
               <CardHeader>
                 <CardTitle className="text-lg">Hero Section</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 pt-4">
                 <div className="grid gap-2">
                   <Label htmlFor="hero_heading">Judul Hero</Label>
                   <Input
@@ -310,7 +310,7 @@ export default function SettingsIndex({ settings }: Props) {
               <CardHeader>
                 <CardTitle className="text-lg">Tombol CTA</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 pt-4">
                 <div className="grid gap-2">
                   <Label htmlFor="hero_cta_text">Teks Tombol Utama</Label>
                   <Input
