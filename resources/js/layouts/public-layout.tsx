@@ -111,7 +111,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
           </div>
         )}
       </header>
-      <main className="flex-1">{children}</main>
+      <main className={`flex-1 ${!isHome ? 'pt-16' : ''}`}>{children}</main>
       <footer className="border-t border-[#E5E7EB] bg-[#0F172A] text-white">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="grid gap-8 md:grid-cols-3">
