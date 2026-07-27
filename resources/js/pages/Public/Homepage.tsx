@@ -89,13 +89,41 @@ export default function Homepage({ services, posts, testimonials }: HomepageProp
               </div>
             </div>
             {settings.hero_image && (
-              <div className="mt-10 lg:mt-0">
+              <div className="group relative mt-10 lg:mt-0">
                 <img
                   src={settings.hero_image}
                   alt="Hero"
-                  className="h-auto w-full rounded-lg object-cover shadow-2xl"
+                  className="h-auto w-full rounded-lg object-cover shadow-2xl transition-transform duration-500 group-hover:scale-[1.03]"
                   style={{ aspectRatio: '4 / 3' }}
                 />
+
+                <div className="absolute -top-3 -right-3 flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-amber-600 shadow-lg transition-all duration-300 opacity-80 group-hover:opacity-100 group-hover:scale-110 group-hover:shadow-xl">
+                  <svg className="h-3.5 w-3.5 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  <span>4.9/5</span>
+                </div>
+
+                <div className="absolute top-1/2 -left-3 -translate-y-1/2 flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-indigo-600 shadow-lg transition-all duration-300 opacity-80 group-hover:opacity-100 group-hover:scale-110 group-hover:shadow-xl">
+                  <svg className="h-3.5 w-3.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span>100+ Client</span>
+                </div>
+
+                <div className="absolute -bottom-3 -right-3 flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-emerald-600 shadow-lg transition-all duration-300 opacity-80 group-hover:opacity-100 group-hover:scale-110 group-hover:shadow-xl">
+                  <svg className="h-3.5 w-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  <span>24/7 Support</span>
+                </div>
+
+                <div className="absolute -bottom-3 -left-3 flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-violet-600 shadow-lg transition-all duration-300 opacity-80 group-hover:opacity-100 group-hover:scale-110 group-hover:shadow-xl">
+                  <svg className="h-3.5 w-3.5 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>10 Tahun Pengalaman</span>
+                </div>
               </div>
             )}
           </div>
