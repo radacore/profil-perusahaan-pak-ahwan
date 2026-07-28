@@ -132,6 +132,11 @@
     --sidebar-ring: oklch(0.439 0 0);
 }
 
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
 @layer base {
     * {
         @apply border-border;

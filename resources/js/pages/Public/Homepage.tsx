@@ -89,7 +89,7 @@ export default function Homepage({ services, posts, testimonials }: HomepageProp
               </div>
             </div>
             {settings.hero_image && (
-              <div className="group relative mt-10 p-6 lg:mt-0">
+              <div className="group relative mt-10 lg:mt-0">
                 <img
                   src={settings.hero_image}
                   alt="Hero"
@@ -97,32 +97,52 @@ export default function Homepage({ services, posts, testimonials }: HomepageProp
                   style={{ aspectRatio: '4 / 3' }}
                 />
 
-                <div className="absolute -top-4 -right-8 flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-amber-600 shadow-lg transition-all duration-300 opacity-90 group-hover:opacity-100 group-hover:scale-110 group-hover:shadow-xl">
-                  <svg className="h-4 w-4 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                  </svg>
-                  <span>4.9/5</span>
+                <div className="absolute -top-6 -right-4 flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 shadow-xl backdrop-blur-md animate-float">
+                  <div className="rounded-lg bg-amber-500/20 p-2 text-amber-300">
+                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-white">4.9/5</div>
+                    <div className="text-xs text-white/60">Client Rating</div>
+                  </div>
                 </div>
 
-                <div className="absolute top-1/2 -left-8 -translate-y-1/2 flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-indigo-600 shadow-lg transition-all duration-300 opacity-90 group-hover:opacity-100 group-hover:scale-110 group-hover:shadow-xl">
-                  <svg className="h-4 w-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span>100+ Client</span>
+                <div className="absolute top-1/4 -left-8 flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 shadow-xl backdrop-blur-md animate-float" style={{ animationDelay: '-2s' }}>
+                  <div className="rounded-lg bg-blue-500/20 p-2 text-blue-300">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-white">100+</div>
+                    <div className="text-xs text-white/60">Happy Clients</div>
+                  </div>
                 </div>
 
-                <div className="absolute -bottom-4 -right-8 flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-emerald-600 shadow-lg transition-all duration-300 opacity-90 group-hover:opacity-100 group-hover:scale-110 group-hover:shadow-xl">
-                  <svg className="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                  </svg>
-                  <span>24/7 Support</span>
+                <div className="absolute -bottom-4 right-8 flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 shadow-xl backdrop-blur-md animate-float" style={{ animationDelay: '-1s' }}>
+                  <div className="rounded-lg bg-emerald-500/20 p-2 text-emerald-300">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-white">24/7</div>
+                    <div className="text-xs text-white/60">Live Support</div>
+                  </div>
                 </div>
 
-                <div className="absolute -bottom-4 -left-8 flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-violet-600 shadow-lg transition-all duration-300 opacity-90 group-hover:opacity-100 group-hover:scale-110 group-hover:shadow-xl">
-                  <svg className="h-4 w-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span>10 Tahun Pengalaman</span>
+                <div className="absolute bottom-12 -left-4 flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 shadow-xl backdrop-blur-md animate-float" style={{ animationDelay: '-4s' }}>
+                  <div className="rounded-lg bg-violet-500/20 p-2 text-violet-300">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-white">10 Tahun</div>
+                    <div className="text-xs text-white/60">Pengalaman</div>
+                  </div>
                 </div>
               </div>
             )}
