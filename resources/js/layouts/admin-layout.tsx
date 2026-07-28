@@ -32,19 +32,39 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const adminPath = '/dashboard-admin';
 
-  const navItems = [
-    { href: adminPath, label: 'Dashboard', key: 'dashboard' },
-    { href: `${adminPath}/tentang`, label: 'Tentang', key: 'pages' },
-    { href: `${adminPath}/blog`, label: 'Blog', key: 'blog' },
-    { href: `${adminPath}/blog-categories`, label: 'Kategori Blog', key: 'categories' },
-    { href: `${adminPath}/blog-tags`, label: 'Tag Blog', key: 'tags' },
-    { href: `${adminPath}/services`, label: 'Layanan', key: 'services' },
-    { href: `${adminPath}/portfolio`, label: 'Portofolio', key: 'portfolio' },
-    { href: `${adminPath}/team`, label: 'Tim', key: 'team' },
-    { href: `${adminPath}/testimonials`, label: 'Testimoni', key: 'testimonials' },
-    { href: `${adminPath}/contact-submissions`, label: 'Pesan Masuk', key: 'messages' },
-    { href: `${adminPath}/media`, label: 'Media', key: 'media' },
-    { href: `${adminPath}/settings`, label: 'Pengaturan', key: 'settings' },
+  const navGroups = [
+    {
+      label: '',
+      items: [
+        { href: adminPath, label: 'Dashboard', key: 'dashboard' },
+      ],
+    },
+    {
+      label: 'Konten',
+      items: [
+        { href: `${adminPath}/tentang`, label: 'Tentang', key: 'pages' },
+        { href: `${adminPath}/blog`, label: 'Blog', key: 'blog' },
+        { href: `${adminPath}/blog-categories`, label: 'Kategori Blog', key: 'categories' },
+        { href: `${adminPath}/blog-tags`, label: 'Tag Blog', key: 'tags' },
+        { href: `${adminPath}/services`, label: 'Layanan', key: 'services' },
+        { href: `${adminPath}/portfolio`, label: 'Portofolio', key: 'portfolio' },
+        { href: `${adminPath}/team`, label: 'Tim', key: 'team' },
+        { href: `${adminPath}/testimonials`, label: 'Testimoni', key: 'testimonials' },
+      ],
+    },
+    {
+      label: 'Manajemen',
+      items: [
+        { href: `${adminPath}/contact-submissions`, label: 'Pesan Masuk', key: 'messages' },
+        { href: `${adminPath}/media`, label: 'Media', key: 'media' },
+      ],
+    },
+    {
+      label: 'Pengaturan',
+      items: [
+        { href: `${adminPath}/settings`, label: 'Pengaturan', key: 'settings' },
+      ],
+    },
   ];
 
   const sidebarWidth = collapsed ? 'w-16' : 'w-64';
@@ -70,26 +90,37 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         <nav className="flex-1 overflow-y-auto px-2 py-4">
-          {navItems.map((item) => {
-            const isActive = url === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                    : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground'
-                } ${collapsed ? 'justify-center px-0' : ''}`}
-                title={collapsed ? item.label : undefined}
-              >
-                {icons[item.key]}
-                <span className={`transition-opacity duration-200 ${collapsed ? 'hidden' : ''}`}>
-                  {item.label}
-                </span>
-              </Link>
-            );
-          })}
+          {navGroups.map((group, gi) => (
+            <div key={group.label || `g-${gi}`}>
+              {group.label && (
+                <div className="px-3 pb-1 pt-4">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/50">
+                    {group.label}
+                  </span>
+                </div>
+              )}
+              {group.items.map((item) => {
+                const isActive = url === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                      isActive
+                        ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                        : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground'
+                    } ${collapsed ? 'justify-center px-0' : ''}`}
+                    title={collapsed ? item.label : undefined}
+                  >
+                    {icons[item.key]}
+                    <span className={`transition-opacity duration-200 ${collapsed ? 'hidden' : ''}`}>
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
         <div className={`border-t border-sidebar-border ${collapsed ? 'px-0 py-4' : 'px-4 py-4'}`}>
