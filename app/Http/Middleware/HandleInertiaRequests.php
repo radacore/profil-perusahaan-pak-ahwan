@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -40,7 +41,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'settings' => \App\Models\GlobalSetting::pluck('setting_value', 'setting_key'),
+            'settings' => Cache::remember('global_settings', 3600, fn () => \App\Models\GlobalSetting::pluck('setting_value', 'setting_key')->toArray()),
         ];
     }
 }

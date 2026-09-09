@@ -61,10 +61,10 @@ class DummyDataSeeder extends Seeder
                 'title' => 'Cara Membangun Website Perusahaan yang Efektif',
                 'content' => '<h2>Pendahuluan</h2><p>Website perusahaan adalah wajah bisnis Anda di dunia digital. Artikel ini akan membahas langkah-langkah penting dalam membangun website yang tidak hanya menarik tapi juga fungsional.</p><h3>1. Tentukan Tujuan Website</h3><p>Sebelum membangun, tentukan apa tujuan utama website Anda. Apakah untuk branding, penjualan, atau informasi?</p><h3>2. Pilih Platform yang Tepat</h3><p>Laravel adalah pilihan tepat untuk website perusahaan karena keamanan, skalabilitas, dan kemudahan maintenance.</p><h3>3. Desain Responsif</h3><p>Pastikan website tampil sempurna di semua perangkat, dari desktop hingga smartphone.</p><h3>Kesimpulan</h3><p>Website yang efektif adalah investasi jangka panjang untuk bisnis Anda.</p>',
                 'slug' => 'cara-membangun-website-perusahaan-efektif',
-                'author' => 'Tim ProfilKorp',
+                'author' => 'Tim CV Azhari Permata Mandiri',
                 'status' => 'published',
                 'published_at' => $now->copy()->subDays(10),
-                'meta_title' => 'Cara Membangun Website Perusahaan yang Efektif - ProfilKorp',
+                'meta_title' => 'Cara Membangun Website Perusahaan yang Efektif - CV Azhari Permata Mandiri',
                 'meta_description' => 'Panduan lengkap membangun website perusahaan yang efektif dan profesional.',
                 'category' => $categories[0],
                 'tagKeys' => [0, 1],
@@ -73,10 +73,10 @@ class DummyDataSeeder extends Seeder
                 'title' => '5 Tren Desain Grafis 2026 yang Wajib Diketahui',
                 'content' => '<h2>Pendahuluan</h2><p>Dunia desain grafis terus berkembang. Di tahun 2026, ada beberapa tren yang diprediksi akan mendominasi industri kreatif.</p><h3>1. Minimalis Bertekstur</h3><p>Desain minimalis tetap populer, namun dengan tambahan tekstur dan elemen organik yang memberi kedalaman.</p><h3>2. Tipografi Ekspresif</h3><p>Penggunaan tipografi yang berani dan ekspresif sebagai elemen utama desain.</p><h3>3. Warna-warna Earth Tone</h3><p>Palet warna alami dan hangat menjadi pilihan utama untuk menciptakan kesan autentik.</p><h3>Kesimpulan</h3><p>Ikuti tren ini untuk menjaga desain Anda tetap relevan dan menarik.</p>',
                 'slug' => '5-tren-desain-grafis-2026',
-                'author' => 'Tim ProfilKorp',
+                'author' => 'Tim CV Azhari Permata Mandiri',
                 'status' => 'published',
                 'published_at' => $now->copy()->subDays(7),
-                'meta_title' => '5 Tren Desain Grafis 2026 - ProfilKorp',
+                'meta_title' => '5 Tren Desain Grafis 2026 - CV Azhari Permata Mandiri',
                 'meta_description' => 'Ketahui tren desain grafis terbaru di tahun 2026.',
                 'category' => $categories[2],
                 'tagKeys' => [2, 5],
@@ -85,10 +85,10 @@ class DummyDataSeeder extends Seeder
                 'title' => 'Panduan SEO untuk Pemula: Mulai dari Mana?',
                 'content' => '<h2>Apa itu SEO?</h2><p>SEO (Search Engine Optimization) adalah proses mengoptimalkan website agar muncul di peringkat atas hasil pencarian Google.</p><h3>1. Riset Kata Kunci</h3><p>Mulai dengan mencari kata kunci yang relevan dengan bisnis Anda menggunakan tools seperti Google Keyword Planner.</p><h3>2. Optimasi On-Page</h3><p>Pastikan setiap halaman memiliki meta title, meta description, dan heading yang optimal.</p><h3>3. Kecepatan Website</h3><p>Google memprioritaskan website yang cepat. Gunakan caching dan optimasi gambar.</p><h3>Kesimpulan</h3><p>SEO adalah investasi jangka panjang. Mulai sekarang juga!</p>',
                 'slug' => 'panduan-seo-untuk-pemula',
-                'author' => 'Tim ProfilKorp',
+                'author' => 'Tim CV Azhari Permata Mandiri',
                 'status' => 'published',
                 'published_at' => $now->copy()->subDays(5),
-                'meta_title' => 'Panduan SEO untuk Pemula - ProfilKorp',
+                'meta_title' => 'Panduan SEO untuk Pemula - CV Azhari Permata Mandiri',
                 'meta_description' => 'Panduan SEO step-by-step untuk pemula yang ingin website-nya muncul di Google.',
                 'category' => $categories[3],
                 'tagKeys' => [3],
@@ -97,10 +97,10 @@ class DummyDataSeeder extends Seeder
                 'title' => 'Strategi Digital Marketing untuk UMKM',
                 'content' => '<h2>Mengapa Digital Marketing Penting?</h2><p>Di era digital, UMKM yang tidak memanfaatkan pemasaran online akan tertinggal dari pesaing.</p><h3>1. Manfaatkan Media Sosial</h3><p>Instagram, Facebook, dan TikTok adalah platform yang efektif untuk menjangkau target audiens.</p><h3>2. Email Marketing</h3><p>Bangun hubungan dengan pelanggan melalui newsletter dan email promosi yang personal.</p><h3>3. Google My Business</h3><p>Daftarkan bisnis Anda di Google My Business agar mudah ditemukan pelanggan lokal.</p><h3>Kesimpulan</h3><p>Mulai dengan strategi sederhana dan konsisten, lalu evaluasi hasilnya secara berkala.</p>',
                 'slug' => 'strategi-digital-marketing-umkm',
-                'author' => 'Tim ProfilKorp',
+                'author' => 'Tim CV Azhari Permata Mandiri',
                 'status' => 'published',
                 'published_at' => $now->copy()->subDays(3),
-                'meta_title' => 'Strategi Digital Marketing untuk UMKM - ProfilKorp',
+                'meta_title' => 'Strategi Digital Marketing untuk UMKM - CV Azhari Permata Mandiri',
                 'meta_description' => 'Panduan digital marketing untuk UMKM agar bersaing di era digital.',
                 'category' => $categories[3],
                 'tagKeys' => [3, 4],
@@ -109,10 +109,10 @@ class DummyDataSeeder extends Seeder
                 'title' => 'Tips Memilih Jasa Konsultan IT yang Tepat',
                 'content' => '<h2>Mengapa Perlu Konsultan IT?</h2><p>Konsultan IT membantu bisnis Anda mengambil keputusan teknologi yang tepat tanpa harus memiliki tim IT internal yang besar.</p><h3>1. Cek Portofolio</h3><p>Lihat proyek-proyek sebelumnya yang pernah dikerjakan oleh konsultan tersebut.</p><h3>2. Pahami Pendekatan Mereka</h3><p>Konsultan yang baik akan mendengarkan kebutuhan Anda terlebih dahulu sebelum memberikan solusi.</p><h3>3. Komunikasi yang Jelas</h3><p>Pastikan konsultan mampu menjelaskan hal-hal teknis dengan bahasa yang mudah dipahami.</p><h3>Kesimpulan</h3><p>Konsultan IT yang tepat adalah mitra yang akan membantu bisnis Anda tumbuh.</p>',
                 'slug' => 'tips-memilih-konsultan-it',
-                'author' => 'Tim ProfilKorp',
+                'author' => 'Tim CV Azhari Permata Mandiri',
                 'status' => 'published',
                 'published_at' => $now->copy()->subDays(1),
-                'meta_title' => 'Tips Memilih Jasa Konsultan IT - ProfilKorp',
+                'meta_title' => 'Tips Memilih Jasa Konsultan IT - CV Azhari Permata Mandiri',
                 'meta_description' => 'Panduan memilih konsultan IT yang tepat untuk bisnis Anda.',
                 'category' => $categories[1],
                 'tagKeys' => [4],
@@ -137,10 +137,10 @@ class DummyDataSeeder extends Seeder
 
         // ── Team Members ──
         $teamData = [
-            ['name' => 'Ahmad Rizki', 'title' => 'CEO & Founder', 'bio' => 'Berpengalaman lebih dari 15 tahun di industri teknologi. Mendirikan ProfilKorp dengan visi membantu bisnis bertransformasi secara digital.', 'email' => 'ahmad@profilkorp.com', 'is_published' => true],
-            ['name' => 'Siti Nurhaliza', 'title' => 'Lead Designer', 'bio' => 'Desainer kreatif dengan spesialisasi di UI/UX dan branding. Telah menangani lebih dari 50 proyek desain untuk berbagai klien.', 'email' => 'siti@profilkorp.com', 'is_published' => true],
-            ['name' => 'Budi Santoso', 'title' => 'Web Developer Senior', 'bio' => 'Full-stack developer dengan keahlian di Laravel, React, dan arsitektur cloud. Sertifikasi AWS Solutions Architect.', 'email' => 'budi@profilkorp.com', 'is_published' => true],
-            ['name' => 'Dewi Lestari', 'title' => 'Marketing Manager', 'bio' => 'Ahli digital marketing dengan track record meningkatkan engagement hingga 300% untuk klien-klien sebelumnya.', 'email' => 'dewi@profilkorp.com', 'is_published' => true],
+            ['name' => 'Ahmad Rizki', 'title' => 'CEO & Founder', 'bio' => 'Berpengalaman lebih dari 15 tahun di industri teknologi. Mendirikan CV Azhari Permata Mandiri dengan visi membantu bisnis bertransformasi secara digital.', 'email' => 'ahmad@cvazharipermatamandiri.com', 'is_published' => true],
+            ['name' => 'Siti Nurhaliza', 'title' => 'Lead Designer', 'bio' => 'Desainer kreatif dengan spesialisasi di UI/UX dan branding. Telah menangani lebih dari 50 proyek desain untuk berbagai klien.', 'email' => 'siti@cvazharipermatamandiri.com', 'is_published' => true],
+            ['name' => 'Budi Santoso', 'title' => 'Web Developer Senior', 'bio' => 'Full-stack developer dengan keahlian di Laravel, React, dan arsitektur cloud. Sertifikasi AWS Solutions Architect.', 'email' => 'budi@cvazharipermatamandiri.com', 'is_published' => true],
+            ['name' => 'Dewi Lestari', 'title' => 'Marketing Manager', 'bio' => 'Ahli digital marketing dengan track record meningkatkan engagement hingga 300% untuk klien-klien sebelumnya.', 'email' => 'dewi@cvazharipermatamandiri.com', 'is_published' => true],
         ];
         foreach ($teamData as $data) {
             TeamMember::create($data);
@@ -159,9 +159,9 @@ class DummyDataSeeder extends Seeder
 
         // ── Testimonials ──
         $testimonialsData = [
-            ['client_name' => 'Bambang Sugiarto', 'client_company' => 'PT Maju Jaya', 'client_title' => 'Direktur Utama', 'message' => 'Sangat profesional! Tim ProfilKorp berhasil membangun website perusahaan kami tepat waktu dengan kualitas yang melebihi ekspektasi. Komunikasi selama proses pengerjaan sangat lancar.', 'rating' => 5, 'status' => 'approved'],
-            ['client_name' => 'Fitri Handayani', 'client_company' => 'CV Kreatif Mandiri', 'client_title' => 'Owner', 'message' => 'Desainnya luar biasa! Branding baru kami berhasil meningkatkan brand awareness secara signifikan. Terima kasih ProfilKorp!', 'rating' => 5, 'status' => 'approved'],
-            ['client_name' => 'Hendra Gunawan', 'client_company' => 'Toko Berkah', 'client_title' => 'Manajer', 'message' => 'Sejak menggunakan jasa digital marketing dari ProfilKorp, penjualan online kami meningkat 150% dalam 3 bulan. Sangat recommended!', 'rating' => 5, 'status' => 'approved'],
+            ['client_name' => 'Bambang Sugiarto', 'client_company' => 'PT Maju Jaya', 'client_title' => 'Direktur Utama', 'message' => 'Sangat profesional! Tim CV Azhari Permata Mandiri berhasil membangun website perusahaan kami tepat waktu dengan kualitas yang melebihi ekspektasi. Komunikasi selama proses pengerjaan sangat lancar.', 'rating' => 5, 'status' => 'approved'],
+            ['client_name' => 'Fitri Handayani', 'client_company' => 'CV Kreatif Mandiri', 'client_title' => 'Owner', 'message' => 'Desainnya luar biasa! Branding baru kami berhasil meningkatkan brand awareness secara signifikan. Terima kasih CV Azhari Permata Mandiri!', 'rating' => 5, 'status' => 'approved'],
+            ['client_name' => 'Hendra Gunawan', 'client_company' => 'Toko Berkah', 'client_title' => 'Manajer', 'message' => 'Sejak menggunakan jasa digital marketing dari CV Azhari Permata Mandiri, penjualan online kami meningkat 150% dalam 3 bulan. Sangat recommended!', 'rating' => 5, 'status' => 'approved'],
             ['client_name' => 'Ratna Dewi', 'client_company' => 'Yayasan Peduli', 'client_title' => 'Ketua Yayasan', 'message' => 'Tim sangat responsif dan memahami kebutuhan kami. Sistem informasi yang dibangun sangat membantu operasional yayasan sehari-hari.', 'rating' => 4, 'status' => 'approved'],
         ];
         foreach ($testimonialsData as $data) {

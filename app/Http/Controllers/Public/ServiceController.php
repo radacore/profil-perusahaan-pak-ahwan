@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\PortfolioProject;
 use App\Models\Service;
 use Inertia\Inertia;
 
@@ -26,10 +25,6 @@ class ServiceController extends Controller
 
         return Inertia::render('Public/Services/Show', [
             'service' => $service,
-            'projects' => PortfolioProject::where('is_published', true)
-                ->where('service_id', $service->id)
-                ->with('portfolioImages')
-                ->get(),
         ]);
     }
 }

@@ -38,18 +38,27 @@ interface BlogIndexProps {
 }
 
 export default function BlogIndex({ posts, categories, selectedCategory }: BlogIndexProps) {
-  const settings = (usePage().props as any).settings || {};
+  const { settings: sharedSettings } = usePage().props as unknown as { settings: Record<string, string> };
+  const settings = sharedSettings || {};
+  const desc = settings.meta_description || 'Artikel dan wawasan terbaru.';
+  const canonical = typeof window !== 'undefined' ? `${window.location.origin}/blog${selectedCategory ? `?category=${selectedCategory}` : ''}` : '/blog';
 
   return (
     <>
-      <Head title="Blog" />
+      <Head title="Blog">
+        <meta name="description" content={desc} />
+        <meta property="og:title" content="Blog" />
+        <meta property="og:description" content={desc} />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href={canonical} />
+      </Head>
 
       {/* Page Header */}
       <section className="bg-gradient-to-br from-[#1E3A8A] to-[#0F172A] text-white">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold sm:text-4xl">Blog</h1>
           <p className="mt-2 text-[#E0F2FE]">
-            Artikel dan wawasan dari {settings.company_name || 'ProfilKorp'}.
+            Artikel dan wawasan dari {settings.company_name || 'CV Azhari Permata Mandiri'}.
           </p>
         </div>
       </section>

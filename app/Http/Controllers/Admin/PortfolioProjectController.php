@@ -8,8 +8,10 @@ use App\Models\PortfolioProject;
 use App\Models\Media;
 use App\Models\Service;
 use App\Services\ImageService;
+use App\Support\HtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -58,13 +60,16 @@ class PortfolioProjectController extends Controller
             'service_id' => ['nullable', 'exists:services,id'],
             'is_published' => ['nullable', 'boolean'],
             'images' => ['nullable', 'array'],
-            'images.*' => ['image', 'mimes:jpeg,png,gif,webp', 'max:5120'],
+            'images.*' => ['image', 'mimes:jpeg,jpg,png,webp,avif,gif', 'max:5120'],
         ]);
 
         if (empty($validated['slug'])) {
             $validated['slug'] = str($validated['title'])->slug();
         }
 
+        if (isset($validated['description'])) {
+            $validated['description'] = HtmlSanitizer::clean($validated['description']);
+        }
         $validated['is_published'] = $validated['is_published'] ?? true;
 
         $project = PortfolioProject::create($validated);
@@ -96,6 +101,7 @@ class PortfolioProjectController extends Controller
             }
         }
 
+        Cache::forget('homepage_data');
         return redirect()->route('admin.portfolio.index')->with('success', 'Proyek berhasil ditambahkan.');
     }
 
@@ -131,7 +137,12 @@ class PortfolioProjectController extends Controller
             $validated['slug'] = str($validated['title'])->slug();
         }
 
+        if (isset($validated['description'])) {
+            $validated['description'] = HtmlSanitizer::clean($validated['description']);
+        }
+
         $project->update($validated);
+        Cache::forget('homepage_data');
 
         return redirect()->route('admin.portfolio.index')->with('success', 'Proyek berhasil diperbarui.');
     }
@@ -139,16 +150,18 @@ class PortfolioProjectController extends Controller
     public function destroy($id): RedirectResponse
     {
         PortfolioProject::findOrFail($id)->delete();
+        Cache::forget('homepage_data');
 
         return redirect()->route('admin.portfolio.index')->with('success', 'Proyek berhasil dihapus.');
     }
 
     public function uploadThumbnail(Request $request, $id): RedirectResponse
     {
-        $request->validate(['thumbnail' => ['required', 'image', 'max:5120']]);
+        $request->validate(['thumbnail' => ['required', 'image', 'mimes:jpeg,jpg,png,webp,avif,gif', 'max:5120']]);
 
         $data = $this->imageService->convertToWebp($request->file('thumbnail'), 'portfolio/thumbnails');
         PortfolioProject::findOrFail($id)->update(['thumbnail_url' => $data['s3_url']]);
+        Cache::forget('homepage_data');
 
         return redirect()->back()->with('success', 'Thumbnail berhasil diupload.');
     }
@@ -156,7 +169,7 @@ class PortfolioProjectController extends Controller
     public function addGalleryImage(Request $request, $id): RedirectResponse
     {
         $request->validate([
-            'image' => ['required', 'image', 'max:5120'],
+            'image' => ['required', 'image', 'mimes:jpeg,jpg,png,webp,avif,gif', 'max:5120'],
             'caption' => ['nullable', 'string', 'max:255'],
         ]);
 

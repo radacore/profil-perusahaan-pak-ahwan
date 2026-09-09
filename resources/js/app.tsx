@@ -4,7 +4,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import PublicLayout from '@/layouts/public-layout';
 import AdminLayout from '@/layouts/admin-layout';
 
-const appName = import.meta.env.VITE_APP_NAME || 'ProfilKorp';
+const appName = import.meta.env.VITE_APP_NAME || 'CV Azhari Permata Mandiri';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),

@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Service;
 use App\Services\ImageService;
+use App\Support\HtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -37,6 +39,7 @@ class ServiceController extends Controller
             'slug' => ['nullable', 'string', 'max:255', 'unique:services,slug'],
             'description' => ['nullable', 'string'],
             'short_description' => ['nullable', 'string', 'max:500'],
+            'icon_name' => ['nullable', 'string', 'max:50'],
             'is_published' => ['nullable', 'boolean'],
         ]);
 
@@ -44,8 +47,12 @@ class ServiceController extends Controller
             $validated['slug'] = str($validated['title'])->slug();
         }
 
+        if (isset($validated['description'])) {
+            $validated['description'] = HtmlSanitizer::clean($validated['description']);
+        }
         $validated['is_published'] = $validated['is_published'] ?? true;
         Service::create($validated);
+        Cache::forget('homepage_data');
 
         return redirect()->route('admin.services.index')->with('success', 'Layanan berhasil ditambahkan.');
     }
@@ -66,6 +73,7 @@ class ServiceController extends Controller
             'slug' => ['nullable', 'string', 'max:255', 'unique:services,slug,' . $id],
             'description' => ['nullable', 'string'],
             'short_description' => ['nullable', 'string', 'max:500'],
+            'icon_name' => ['nullable', 'string', 'max:50'],
             'is_published' => ['nullable', 'boolean'],
         ]);
 
@@ -73,7 +81,12 @@ class ServiceController extends Controller
             $validated['slug'] = str($validated['title'])->slug();
         }
 
+        if (isset($validated['description'])) {
+            $validated['description'] = HtmlSanitizer::clean($validated['description']);
+        }
+
         $service->update($validated);
+        Cache::forget('homepage_data');
 
         return redirect()->route('admin.services.index')->with('success', 'Layanan berhasil diperbarui.');
     }
@@ -81,26 +94,29 @@ class ServiceController extends Controller
     public function destroy($id): RedirectResponse
     {
         Service::findOrFail($id)->delete();
+        Cache::forget('homepage_data');
 
         return redirect()->route('admin.services.index')->with('success', 'Layanan berhasil dihapus.');
     }
 
     public function uploadIcon(Request $request, $id): RedirectResponse
     {
-        $request->validate(['icon' => ['required', 'image', 'max:2048']]);
+        $request->validate(['icon' => ['required', 'image', 'mimes:jpeg,jpg,png,webp,avif,gif', 'max:2048']]);
 
         $data = $this->imageService->convertToWebp($request->file('icon'), 'services/icons');
         Service::findOrFail($id)->update(['icon_url' => $data['s3_url']]);
+        Cache::forget('homepage_data');
 
         return redirect()->back()->with('success', 'Ikon berhasil diupload.');
     }
 
     public function uploadImage(Request $request, $id): RedirectResponse
     {
-        $request->validate(['image' => ['required', 'image', 'max:5120']]);
+        $request->validate(['image' => ['required', 'image', 'mimes:jpeg,jpg,png,webp,avif,gif', 'max:5120']]);
 
         $data = $this->imageService->convertToWebp($request->file('image'), 'services/images');
         Service::findOrFail($id)->update(['icon_url' => $data['s3_url']]);
+        Cache::forget('homepage_data');
 
         return redirect()->back()->with('success', 'Gambar berhasil diupload.');
     }

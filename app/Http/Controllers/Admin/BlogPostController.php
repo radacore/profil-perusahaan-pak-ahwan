@@ -7,8 +7,10 @@ use App\Models\BlogPost;
 use App\Models\BlogCategory;
 use App\Models\BlogTag;
 use App\Services\ImageService;
+use App\Support\HtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -73,7 +75,7 @@ class BlogPostController extends Controller
         $post = BlogPost::create([
             'title' => $validated['title'],
             'slug' => $validated['slug'],
-            'content' => $validated['content'],
+            'content' => HtmlSanitizer::clean($validated['content']),
             'author' => $validated['author'],
             'status' => $validated['status'],
             'blog_category_id' => $validated['blog_category_id'] ?? null,
@@ -86,6 +88,7 @@ class BlogPostController extends Controller
             $tagIds = collect($validated['tags'])->pluck('id')->filter();
             $post->blogTags()->sync($tagIds);
         }
+        Cache::forget('homepage_data');
 
         return redirect()->route('admin.blog.index')->with('success', 'Blog post berhasil dibuat.');
     }
@@ -123,7 +126,7 @@ class BlogPostController extends Controller
         $post->update([
             'title' => $validated['title'],
             'slug' => $validated['slug'],
-            'content' => $validated['content'],
+            'content' => HtmlSanitizer::clean($validated['content']),
             'author' => $validated['author'],
             'status' => $validated['status'],
             'blog_category_id' => $validated['blog_category_id'] ?? null,
@@ -136,6 +139,7 @@ class BlogPostController extends Controller
             $tagIds = collect($validated['tags'])->pluck('id')->filter();
             $post->blogTags()->sync($tagIds);
         }
+        Cache::forget('homepage_data');
 
         return redirect()->route('admin.blog.index')->with('success', 'Blog post berhasil diperbarui.');
     }
@@ -144,13 +148,14 @@ class BlogPostController extends Controller
     {
         $post = BlogPost::findOrFail($id);
         $post->delete();
+        Cache::forget('homepage_data');
 
         return redirect()->route('admin.blog.index')->with('success', 'Blog post berhasil dihapus.');
     }
 
     public function uploadFeaturedImage(Request $request, $id): RedirectResponse
     {
-        $request->validate(['image' => ['required', 'image', 'max:5120']]);
+        $request->validate(['image' => ['required', 'image', 'mimes:jpeg,jpg,png,webp,avif,gif', 'max:5120']]);
 
         $data = $this->imageService->convertToWebp($request->file('image'), 'featured-images');
 

@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         User::create([
             'name' => 'Administrator',
-            'email' => 'admin@profilkorp.com',
+            'email' => 'admin@cvazharipermatamandiri.com',
             'password' => Hash::make('password'),
         ]);
 
@@ -22,22 +22,22 @@ class DatabaseSeeder extends Seeder
             'slug' => 'about',
             'title' => 'Tentang Kami',
             'content' => '<h2>Selamat Datang di Perusahaan Kami</h2><p>Kami adalah perusahaan yang berdedikasi untuk memberikan layanan terbaik kepada pelanggan kami.</p><h3>Misi</h3><p>Memberikan solusi inovatif yang melebihi harapan.</p><h3>Visi</h3><p>Menjadi pemimpin industri yang diakui secara global.</p>',
-            'meta_title' => 'Tentang Kami - ProfilKorp',
+            'meta_title' => 'Tentang Kami - CV Azhari Permata Mandiri',
             'meta_description' => 'Pelajari lebih lanjut tentang perusahaan kami, misi, dan visi.',
             'is_published' => true,
         ]);
 
         $settings = [
-            'company_name' => 'ProfilKorp',
+            'company_name' => 'CV Azhari Permata Mandiri',
             'company_logo' => '',
             'company_favicon' => '',
-            'contact_email' => 'hello@profilkorp.com',
+            'contact_email' => 'hello@cvazharipermatamandiri.com',
             'contact_phone' => '+62 21 1234 5678',
             'contact_address' => 'Jl. Contoh No. 123, Jakarta Pusat',
-            'social_facebook' => 'https://facebook.com/profilkorp',
-            'social_twitter' => 'https://twitter.com/profilkorp',
-            'social_linkedin' => 'https://linkedin.com/company/profilkorp',
-            'social_instagram' => 'https://instagram.com/profilkorp',
+            'social_facebook' => 'https://facebook.com/cvazharipermatamandiri',
+            'social_twitter' => 'https://twitter.com/cvazharipermatamandiri',
+            'social_linkedin' => 'https://linkedin.com/company/cvazharipermatamandiri',
+            'social_instagram' => 'https://instagram.com/cvazharipermatamandiri',
         ];
 
         foreach ($settings as $key => $value) {

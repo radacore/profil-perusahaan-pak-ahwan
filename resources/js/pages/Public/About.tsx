@@ -1,4 +1,5 @@
 import { Head, usePage } from '@inertiajs/react';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 interface AboutPage {
   title: string;
@@ -6,6 +7,8 @@ interface AboutPage {
   mission: string;
   vision: string;
   values: string[];
+  meta_title?: string | null;
+  meta_description?: string | null;
 }
 
 interface AboutProps {
@@ -13,17 +16,27 @@ interface AboutProps {
 }
 
 export default function About({ page }: AboutProps) {
-  const settings = (usePage().props as any).settings || {};
+  const { settings: sharedSettings } = usePage().props as unknown as { settings: Record<string, string> };
+  const settings = sharedSettings || {};
+  const appUrl = (usePage().props as unknown as { appUrl?: string }).appUrl || (typeof window !== 'undefined' ? window.location.origin : '');
+  const canonical = appUrl ? `${appUrl.replace(/\/$/, '')}/about` : '/about';
+  const desc = page.meta_description || settings.meta_description || (page.content ? page.content.replace(/<[^>]*>/g, '').slice(0, 155) : '');
 
   return (
     <>
-      <Head title={page.title || 'Tentang Kami'} />
+      <Head title={page.title || 'Tentang Kami'}>
+        {desc && <meta name="description" content={desc} />}
+        <meta property="og:title" content={page.meta_title || page.title || 'Tentang Kami'} />
+        {desc && <meta property="og:description" content={desc} />}
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href={canonical} />
+      </Head>
 
       {/* Page Header */}
       <section className="bg-gradient-to-br from-[#1E3A8A] to-[#0F172A] text-white">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold sm:text-4xl">{page.title}</h1>
-          <p className="mt-2 text-[#E0F2FE]">Mengenal lebih dekat {settings.company_name || 'ProfilKorp'}</p>
+          <p className="mt-2 text-[#E0F2FE]">Mengenal lebih dekat {settings.company_name || 'CV Azhari Permata Mandiri'}</p>
         </div>
       </section>
 
@@ -31,7 +44,7 @@ export default function About({ page }: AboutProps) {
       <section className="bg-white py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="prose prose-lg max-w-none text-[#1F2937]">
-            <div dangerouslySetInnerHTML={{ __html: page.content }} />
+            <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }} />
           </div>
         </div>
       </section>

@@ -1,12 +1,13 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { getServiceIcon } from '@/lib/service-icons';
 
 interface Service {
   id: number;
   title: string;
   slug: string;
-  short_description: string | null;
-  icon_url: string | null;
+  short_description: string;
+  icon_name: string | null;
 }
 
 interface Post {
@@ -26,15 +27,370 @@ interface Testimonial {
   image_url: string | null;
 }
 
+interface PortfolioService {
+  id: number;
+  title: string;
+  slug: string;
+}
+
+interface PortfolioProject {
+  id: number;
+  title: string;
+  slug: string;
+  description: string | null;
+  thumbnail: string | null;
+  client: string | null;
+  service: PortfolioService | null;
+}
+
+interface TeamMember {
+  id: number;
+  name: string;
+  title: string | null;
+  bio: string | null;
+  photo: string | null;
+}
+
 interface HomepageProps {
   services: Service[];
   posts: Post[];
   testimonials: Testimonial[];
+  portfolioProjects: PortfolioProject[];
+  portfolioServices: PortfolioService[];
+  teamMembers: TeamMember[];
 }
 
-export default function Homepage({ services, posts, testimonials }: HomepageProps) {
-  const settings = (usePage().props as any).settings || {};
-  const companyName = settings.company_name || 'ProfilKorp';
+function PortfolioCard({ project }: { project: PortfolioProject }) {
+  return (
+    <Link
+      href={`/portfolio/${project.slug}`}
+      className="group overflow-hidden rounded-lg border border-[#E5E7EB] bg-white text-left shadow-sm transition-all hover:shadow-md"
+    >
+      {project.thumbnail ? (
+        <img src={project.thumbnail} alt={project.title} loading="lazy" className="h-52 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+      ) : (
+        <div className="flex h-52 items-center justify-center bg-[#E0F2FE]">
+          <svg className="h-16 w-16 text-[#1E3A8A]/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+      )}
+      <div className="p-5">
+        <h3 className="text-lg font-semibold text-[#1F2937] group-hover:text-[#1E3A8A]">{project.title}</h3>
+        {project.client && <p className="mt-1 text-sm text-[#6B7280]">{project.client}</p>}
+        {project.service && <span className="mt-3 inline-block rounded-full bg-[#E0F2FE] px-3 py-1 text-xs font-medium text-[#1E3A8A]">{project.service.title}</span>}
+      </div>
+    </Link>
+  );
+}
+
+function PortfolioFilter({ projects, services }: { projects: PortfolioProject[]; services: PortfolioService[] }) {
+  const [active, setActive] = useState('all');
+  const filtered = active === 'all' ? projects : projects.filter((p) => p.service?.slug === active);
+  return (
+    <>
+      <div className="mt-8 flex flex-wrap justify-center gap-2">
+        <button type="button" onClick={() => setActive('all')} className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${active === 'all' ? 'bg-[#1E3A8A] text-white' : 'bg-white text-[#1F2937] hover:bg-[#E0F2FE] hover:text-[#1E3A8A]'}`}>Semua</button>
+        {services.map((s) => (
+          <button key={s.id} type="button" onClick={() => setActive(s.slug)} className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${active === s.slug ? 'bg-[#1E3A8A] text-white' : 'bg-white text-[#1F2937] hover:bg-[#E0F2FE] hover:text-[#1E3A8A]'}`}>{s.title}</button>
+        ))}
+      </div>
+      <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {filtered.map((project) => (
+          <PortfolioCard key={project.id} project={project} />
+        ))}
+      </div>
+      {filtered.length === 0 && <p className="mt-8 text-center text-[#6B7280]">Tidak ada proyek untuk kategori ini.</p>}
+    </>
+  );
+}
+
+function TeamMemberCard({ member }: { member: TeamMember }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div className="overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-sm transition-all hover:shadow-md">
+      <div className="p-6 text-center">
+        {member.photo ? (
+          <img
+            src={member.photo}
+            alt={member.name}
+            className="mx-auto h-28 w-28 rounded-full border-4 border-[#E0F2FE] object-cover"
+          />
+        ) : (
+          <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full border-4 border-[#E0F2FE] bg-[#E0F2FE]">
+            <span className="text-3xl font-bold text-[#1E3A8A]">{member.name.charAt(0).toUpperCase()}</span>
+          </div>
+        )}
+        <h3 className="mt-4 text-lg font-semibold text-[#1F2937]">{member.name}</h3>
+        {member.title && <p className="mt-1 text-sm font-medium text-[#1E3A8A]">{member.title}</p>}
+        {member.bio && (
+          <>
+            <button
+              type="button"
+              onClick={() => setExpanded(!expanded)}
+              className="mt-3 inline-flex items-center text-sm font-medium text-[#0D9488] hover:text-[#0D9488]/80"
+            >
+              {expanded ? 'Tutup' : 'Lihat Bio'}
+              <svg className={`ml-1 h-4 w-4 transition-transform ${expanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {expanded && (
+              <div className="mt-4 border-t border-[#E5E7EB] pt-4 text-left">
+                <p className="text-sm leading-relaxed text-[#6B7280]">{member.bio}</p>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
+  return (
+    <div className="flex h-full flex-col rounded-lg border border-[#E5E7EB] bg-[#F3F4F6] p-6">
+      <svg className="h-6 w-6 shrink-0 text-[#0D9488]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+      </svg>
+      <p className="mt-4 flex-1 text-sm italic leading-relaxed text-[#1F2937]">&ldquo;{testimonial.message}&rdquo;</p>
+      <div className="mt-6 flex items-center gap-3">
+        {testimonial.image_url ? (
+          <img src={testimonial.image_url} alt={testimonial.client_name} className="h-10 w-10 rounded-full object-cover" />
+        ) : (
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1E3A8A] text-sm font-bold text-white">
+            {testimonial.client_name.charAt(0).toUpperCase()}
+          </div>
+        )}
+        <div>
+          <p className="text-sm font-semibold text-[#1F2937]">{testimonial.client_name}</p>
+          {testimonial.client_title && <p className="text-xs text-[#6B7280]">{testimonial.client_title}</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function chunk<T>(arr: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
+}
+
+function TestimonialsSlider({ testimonials }: { testimonials: Testimonial[] }) {
+  const pages = chunk(testimonials, 3);
+  const [page, setPage] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+
+  const prev = useCallback(() => setPage((p) => (p - 1 + pages.length) % pages.length), [pages.length]);
+  const next = useCallback(() => setPage((p) => (p + 1) % pages.length), [pages.length]);
+
+  useEffect(() => {
+    if (pages.length <= 1 || paused) return;
+    const id = setInterval(next, 5000);
+    return () => clearInterval(id);
+  }, [pages.length, paused, next]);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') next();
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [prev, next]);
+
+  if (pages.length === 0) return <p className="mt-12 text-center text-[#6B7280]">Belum ada testimoni.</p>;
+  if (pages.length === 1) {
+    return (
+      <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {testimonials.map((t) => (
+          <TestimonialCard key={t.id} testimonial={t} />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="relative mt-12"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={(e) => (touchStartX.current = e.touches[0].clientX)}
+      onTouchEnd={(e) => {
+        if (touchStartX.current === null) return;
+        const diff = e.changedTouches[0].clientX - touchStartX.current;
+        if (Math.abs(diff) > 50) diff > 0 ? prev() : next();
+        touchStartX.current = null;
+      }}
+    >
+      <div className="overflow-hidden">
+        <div
+          className="flex transition-transform duration-500 ease-out"
+          style={{ transform: `translateX(-${page * 100}%)` }}
+        >
+          {pages.map((group, idx) => (
+            <div key={idx} className="w-full shrink-0">
+              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                {group.map((t) => (
+                  <TestimonialCard key={t.id} testimonial={t} />
+                ))}
+                {group.length < 3 && Array.from({ length: 3 - group.length }).map((_, i) => <div key={`empty-${i}`} className="hidden lg:block" />)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={prev}
+        aria-label="Testimoni sebelumnya"
+        className="absolute -left-2 top-1/2 hidden -translate-y-1/2 rounded-full border border-[#E5E7EB] bg-white p-2.5 text-[#1F2937] shadow-md hover:bg-[#F3F4F6] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] md:flex lg:-left-4"
+      >
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        onClick={next}
+        aria-label="Testimoni berikutnya"
+        className="absolute -right-2 top-1/2 hidden -translate-y-1/2 rounded-full border border-[#E5E7EB] bg-white p-2.5 text-[#1F2937] shadow-md hover:bg-[#F3F4F6] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] md:flex lg:-right-4"
+      >
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      <div className="mt-8 flex items-center justify-center gap-2">
+        {pages.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => setPage(i)}
+            aria-label={`Halaman ${i + 1}`}
+            aria-current={i === page ? 'true' : undefined}
+            className={`h-2.5 rounded-full transition-all ${i === page ? 'w-7 bg-[#1E3A8A]' : 'w-2.5 bg-[#D1D5DB] hover:bg-[#9CA3AF]'}`}
+          />
+        ))}
+      </div>
+
+      <div className="mt-4 flex justify-center gap-2 md:hidden">
+        <button type="button" onClick={prev} className="rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#1F2937] shadow-sm">‹ Sebelumnya</button>
+        <button type="button" onClick={next} className="rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#1F2937] shadow-sm">Berikutnya ›</button>
+      </div>
+    </div>
+  );
+}
+
+function TeamSlider({ members }: { members: TeamMember[] }) {
+  const pages = chunk(members, 3);
+  const [page, setPage] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+
+  const prev = useCallback(() => setPage((p) => (p - 1 + pages.length) % pages.length), [pages.length]);
+  const next = useCallback(() => setPage((p) => (p + 1) % pages.length), [pages.length]);
+
+  useEffect(() => {
+    if (pages.length <= 1 || paused) return;
+    const id = setInterval(next, 5000);
+    return () => clearInterval(id);
+  }, [pages.length, paused, next]);
+
+  if (pages.length === 0) return <p className="mt-12 text-center text-[#6B7280]">Belum ada anggota tim.</p>;
+  if (pages.length === 1) {
+    return (
+      <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {members.map((m) => (
+          <TeamMemberCard key={m.id} member={m} />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="relative mt-12"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={(e) => (touchStartX.current = e.touches[0].clientX)}
+      onTouchEnd={(e) => {
+        if (touchStartX.current === null) return;
+        const diff = e.changedTouches[0].clientX - touchStartX.current;
+        if (Math.abs(diff) > 50) diff > 0 ? prev() : next();
+        touchStartX.current = null;
+      }}
+    >
+      <div className="overflow-hidden">
+        <div className="flex transition-transform duration-500 ease-out" style={{ transform: `translateX(-${page * 100}%)` }}>
+          {pages.map((group, idx) => (
+            <div key={idx} className="w-full shrink-0">
+              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {group.map((m) => (
+                  <TeamMemberCard key={m.id} member={m} />
+                ))}
+                {group.length < 3 && Array.from({ length: 3 - group.length }).map((_, i) => <div key={`empty-${i}`} className="hidden lg:block" />)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={prev}
+        aria-label="Anggota sebelumnya"
+        className="absolute -left-2 top-1/2 hidden -translate-y-1/2 rounded-full border border-[#E5E7EB] bg-white p-2.5 text-[#1F2937] shadow-md hover:bg-[#F3F4F6] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] md:flex lg:-left-4"
+      >
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        onClick={next}
+        aria-label="Anggota berikutnya"
+        className="absolute -right-2 top-1/2 hidden -translate-y-1/2 rounded-full border border-[#E5E7EB] bg-white p-2.5 text-[#1F2937] shadow-md hover:bg-[#F3F4F6] focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] md:flex lg:-right-4"
+      >
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      <div className="mt-8 flex items-center justify-center gap-2">
+        {pages.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => setPage(i)}
+            aria-label={`Halaman ${i + 1}`}
+            aria-current={i === page ? 'true' : undefined}
+            className={`h-2.5 rounded-full transition-all ${i === page ? 'w-7 bg-[#1E3A8A]' : 'w-2.5 bg-[#D1D5DB] hover:bg-[#9CA3AF]'}`}
+          />
+        ))}
+      </div>
+
+      <div className="mt-4 flex justify-center gap-2 md:hidden">
+        <button type="button" onClick={prev} className="rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#1F2937] shadow-sm">‹ Sebelumnya</button>
+        <button type="button" onClick={next} className="rounded-full border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#1F2937] shadow-sm">Berikutnya ›</button>
+      </div>
+    </div>
+  );
+}
+
+export default function Homepage({ services, posts, testimonials, portfolioProjects, portfolioServices, teamMembers }: HomepageProps) {
+  const safeServices = Array.isArray(services) ? services : [];
+  const safePosts = Array.isArray(posts) ? posts : [];
+  const safeTestimonials = Array.isArray(testimonials) ? testimonials : [];
+  const safePortfolioProjects = Array.isArray(portfolioProjects) ? portfolioProjects : [];
+  const safePortfolioServices = Array.isArray(portfolioServices) ? portfolioServices : [];
+  const safeTeamMembers = Array.isArray(teamMembers) ? teamMembers : [];
+  const { settings: sharedSettings } = usePage().props as unknown as { settings: Record<string, string> };
+  const settings = sharedSettings || {};
+  const companyName = settings.company_name || 'CV Azhari Permata Mandiri';
 
   const subtitles = [settings.hero_subtitle_1, settings.hero_subtitle_2, settings.hero_subtitle_3].filter(Boolean);
   const [subIndex, setSubIndex] = useState(0);
@@ -53,10 +409,18 @@ export default function Homepage({ services, posts, testimonials }: HomepageProp
   }, [subtitles.length]);
 
   const subtitle = subtitles[subIndex] || settings.company_tagline || 'Solusi profesional untuk kebutuhan bisnis Anda dengan layanan terpercaya dan inovatif.';
+  const metaDesc = settings.meta_description || subtitle.slice(0, 160);
+  const canonical = typeof window !== 'undefined' ? window.location.origin + '/' : '/';
 
   return (
     <>
-      <Head title={`Selamat Datang di ${companyName}`} />
+      <Head title={`Selamat Datang di ${companyName}`}>
+        <meta name="description" content={metaDesc} />
+        <meta property="og:title" content={companyName} />
+        <meta property="og:description" content={metaDesc} />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href={canonical} />
+      </Head>
 
       {/* Hero Banner */}
       <section className="relative flex min-h-screen items-center bg-gradient-to-br from-[#1E3A8A] via-[#1E3A8A] to-[#0F172A] text-white">
@@ -161,31 +525,28 @@ export default function Homepage({ services, posts, testimonials }: HomepageProp
             </p>
           </div>
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((service) => (
-              <Link
-                key={service.id}
-                href={`/services/${service.slug}`}
-                className="group rounded-lg border border-[#E5E7EB] bg-white p-6 shadow-sm transition-all hover:shadow-md hover:border-[#1E3A8A]/20"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#E0F2FE] text-[#1E3A8A]">
-                  {service.icon_url ? (
-                    <img src={service.icon_url} alt="" className="h-8 w-8 object-contain" />
-                  ) : (
-                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  )}
-                </div>
-                <h3 className="mt-4 text-lg font-semibold text-[#1F2937] group-hover:text-[#1E3A8A]">
-                  {service.title}
-                </h3>
-                <p className="mt-2 text-sm text-[#6B7280] line-clamp-3">
-                  {service.short_description}
-                </p>
-              </Link>
-            ))}
+            {safeServices.map((service) => {
+              const { Icon, colors } = getServiceIcon(service.icon_name);
+              return (
+                <Link
+                  key={service.id}
+                  href={`/services/${service.slug}`}
+                  className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-lg hover:-translate-y-0.5"
+                >
+                  <div className={`flex h-14 w-14 items-center justify-center rounded-xl ${colors.iconBox} ${colors.iconColor}`}>
+                    <Icon className="h-7 w-7" />
+                  </div>
+                  <h3 className="mt-5 text-lg font-semibold text-gray-900 group-hover:text-[#1E3A8A] transition-colors">
+                    {service.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-500 leading-relaxed line-clamp-3">
+                    {service.short_description}
+                  </p>
+                </Link>
+              );
+            })}
           </div>
-          {services.length > 0 && (
+          {safeServices.length > 0 && (
             <div className="mt-10 text-center">
               <Link
                 href="/services"
@@ -201,6 +562,41 @@ export default function Homepage({ services, posts, testimonials }: HomepageProp
         </div>
       </section>
 
+      {/* Portfolio */}
+      <section id="portfolio" className="scroll-mt-16 bg-[#F3F4F6] py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-[#1F2937]">Portofolio</h2>
+            <p className="mt-4 text-lg text-[#6B7280]">Karya terbaik yang telah kami kerjakan untuk klien.</p>
+          </div>
+
+          {safePortfolioServices.length > 0 && safePortfolioProjects.length > 0 && (
+            <PortfolioFilter projects={safePortfolioProjects} services={safePortfolioServices} />
+          )}
+
+          {safePortfolioProjects.length === 0 ? (
+            <p className="mt-12 text-center text-[#6B7280]">Belum ada proyek portofolio.</p>
+          ) : safePortfolioServices.length === 0 ? (
+            <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {safePortfolioProjects.map((project) => (
+                <PortfolioCard key={project.id} project={project} />
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </section>
+
+      {/* Team — 3 per halaman, slider ke samping jika > 3 */}
+      <section id="team" className="scroll-mt-16 bg-white py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-[#1F2937]">Tim Kami</h2>
+            <p className="mt-4 text-lg text-[#6B7280]">Para profesional di balik {settings.company_name || 'CV Azhari Permata Mandiri'}.</p>
+          </div>
+          <TeamSlider members={safeTeamMembers} />
+        </div>
+      </section>
+
       {/* Latest Blog Posts */}
       <section className="bg-[#F3F4F6] py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -211,7 +607,7 @@ export default function Homepage({ services, posts, testimonials }: HomepageProp
             </p>
           </div>
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => (
+            {safePosts.map((post) => (
               <Link
                 key={post.id}
                 href={`/blog/${post.slug}`}
@@ -233,7 +629,7 @@ export default function Homepage({ services, posts, testimonials }: HomepageProp
               </Link>
             ))}
           </div>
-          {posts.length > 0 && (
+          {safePosts.length > 0 && (
             <div className="mt-10 text-center">
               <Link
                 href="/blog"
@@ -249,45 +645,14 @@ export default function Homepage({ services, posts, testimonials }: HomepageProp
         </div>
       </section>
 
-      {/* Testimonials Carousel */}
+      {/* Testimonials — Klien Kami: 3 per halaman, slider ke samping jika > 3 */}
       <section className="bg-white py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-[#1F2937]">Apa Kata Klien Kami</h2>
-            <p className="mt-4 text-lg text-[#6B7280]">
-              Testimoni dari klien yang telah mempercayai layanan kami.
-            </p>
+            <p className="mt-4 text-lg text-[#6B7280]">Testimoni dari klien yang telah mempercayai layanan kami.</p>
           </div>
-          {testimonials.length > 0 ? (
-            <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {testimonials.map((testimonial) => (
-                <div
-                  key={testimonial.id}
-                  className="rounded-lg border border-[#E5E7EB] bg-[#F3F4F6] p-6"
-                >
-                  <svg className="h-6 w-6 text-[#0D9488]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                  </svg>
-                  <p className="mt-4 text-sm italic text-[#1F2937]">
-                    &ldquo;{testimonial.message}&rdquo;
-                  </p>
-                  <div className="mt-6 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1E3A8A] text-sm font-bold text-white">
-                      {testimonial.client_name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-[#1F2937]">{testimonial.client_name}</p>
-                      {testimonial.client_title && (
-                        <p className="text-xs text-[#6B7280]">{testimonial.client_title}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="mt-12 text-center text-[#6B7280]">Belum ada testimoni.</p>
-          )}
+          <TestimonialsSlider testimonials={safeTestimonials} />
         </div>
       </section>
     </>

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $description
  * @property string|null $short_description
  * @property string|null $icon_url
+ * @property string|null $icon_name
  * @property int|null $display_order
  * @property bool $is_published
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'description',
     'short_description',
     'icon_url',
+    'icon_name',
     'display_order',
     'is_published',
 ])]

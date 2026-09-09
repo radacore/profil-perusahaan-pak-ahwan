@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Page;
+use App\Support\HtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -38,8 +40,11 @@ class AboutController extends Controller
             'meta_description' => ['nullable', 'string', 'max:160'],
         ]);
 
+        $validated['content'] = HtmlSanitizer::clean($validated['content']);
+
         $page = Page::where('slug', 'about')->firstOrFail();
         $page->update($validated);
+        Cache::forget('homepage_data');
 
         return redirect()->back()->with('success', 'Halaman About berhasil diperbarui.');
     }

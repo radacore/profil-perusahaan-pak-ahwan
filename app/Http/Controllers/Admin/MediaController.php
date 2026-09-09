@@ -44,7 +44,7 @@ class MediaController extends Controller
     public function upload(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'file' => ['required', 'file', 'max:51200'],
+            'file' => ['required', 'file', 'mimes:jpeg,jpg,png,webp,avif,gif,mp4,webm,pdf', 'max:51200'],
         ]);
 
         $file = $request->file('file');
@@ -95,6 +95,6 @@ class MediaController extends Controller
 
     protected function storageDisk(): string
     {
-        return filled(env('AWS_BUCKET')) ? 's3' : 'public';
+        return filled(config('filesystems.disks.s3.bucket')) ? 's3' : 'public';
     }
 }

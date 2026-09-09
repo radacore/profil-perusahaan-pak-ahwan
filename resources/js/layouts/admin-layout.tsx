@@ -84,7 +84,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span className="text-lg font-bold tracking-tight">PK</span>
           ) : (
             <>
-              <Link href={adminPath} className="text-lg font-bold tracking-tight">ProfilKorp</Link>
+              <Link href={adminPath} className="text-lg font-bold tracking-tight">CV Azhari Permata Mandiri</Link>
             </>
           )}
         </div>

@@ -290,7 +290,7 @@ export default function SettingsIndex({ settings }: Props) {
                     id="hero_heading"
                     value={hero.data.hero_heading}
                     onChange={(e) => hero.setData('hero_heading', e.target.value)}
-                    placeholder="Selamat Datang di ProfilKorp"
+                    placeholder="Selamat Datang di CV Azhari Permata Mandiri"
                   />
                   <InputError message={hero.errors.hero_heading} />
                 </div>

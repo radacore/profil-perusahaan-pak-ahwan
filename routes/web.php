@@ -5,9 +5,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Public\HomepageController;
 use App\Http\Controllers\Public\AboutController;
 use App\Http\Controllers\Public\ServiceController as PublicServiceController;
-use App\Http\Controllers\Public\PortfolioController;
-use App\Http\Controllers\Public\TeamController;
 use App\Http\Controllers\Public\BlogController as PublicBlogController;
+use App\Http\Controllers\Public\PortfolioController as PublicPortfolioController;
 use App\Http\Controllers\Public\ContactController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -27,10 +26,31 @@ use App\Http\Controllers\Admin\SettingController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/rahasianegara/masuksini', [\App\Http\Controllers\Admin\AuthController::class, 'showLoginForm'])->name('secret.login');
-Route::post('/rahasianegara/masuksini', [\App\Http\Controllers\Admin\AuthController::class, 'login']);
+Route::get('/login', fn() => redirect('/rahasianegara/masuksini', 301))->name('login');
+Route::redirect('/register', '/', 301);
+
+Route::middleware('throttle:5,1')->group(function () {
+    Route::get('/rahasianegara/masuksini', [\App\Http\Controllers\Admin\AuthController::class, 'showLoginForm'])->name('secret.login');
+    Route::post('/rahasianegara/masuksini', [\App\Http\Controllers\Admin\AuthController::class, 'login']);
+});
 
 Route::get('/storage/s3/{path}', function (string $path) {
+    if (str_contains($path, '..') || str_starts_with($path, '/') || $path === '') {
+        abort(404);
+    }
+
+    $allowedPrefixes = ['media/', 'portfolio/', 'team/', 'services/', 'blog/', 'settings/', 'logo/', 'favicon/', 'hero/'];
+    $isAllowed = false;
+    foreach ($allowedPrefixes as $prefix) {
+        if (str_starts_with($path, $prefix)) {
+            $isAllowed = true;
+            break;
+        }
+    }
+    if (! $isAllowed) {
+        abort(404);
+    }
+
     try {
         $disk = Storage::disk('s3');
         $stream = $disk->readStream($path);
@@ -38,26 +58,34 @@ Route::get('/storage/s3/{path}', function (string $path) {
             abort(404);
         }
         $mime = $disk->mimeType($path);
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+        $contentType = in_array($mime, $allowedMimes, true) ? $mime : 'image/webp';
+
         return response()->stream(function () use ($stream) {
             fpassthru($stream);
             fclose($stream);
-        }, 200, ['Content-Type' => $mime ?: 'image/webp']);
+        }, 200, [
+            'Content-Type' => $contentType,
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
     } catch (\Exception $e) {
         abort(404);
     }
-})->where('path', '.*')->name('s3.proxy');
+})->where('path', '.*')->middleware('throttle:120,1')->name('s3.proxy');
+
+Route::get('/portfolio/{slug}', [PublicPortfolioController::class, 'show'])->name('portfolio.show');
+Route::redirect('/portfolio', '/#portfolio', 301);
+Route::redirect('/team', '/#team', 301);
 
 Route::get('/', HomepageController::class)->name('home');
 Route::get('/about', AboutController::class)->name('about');
 Route::get('/services', [PublicServiceController::class, 'index'])->name('services.index');
 Route::get('/services/{slug}', [PublicServiceController::class, 'show'])->name('services.show');
-Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio.index');
-Route::get('/portfolio/{slug}', [PortfolioController::class, 'show'])->name('portfolio.show');
-Route::get('/team', [TeamController::class, 'index'])->name('team.index');
 Route::get('/blog', [PublicBlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [PublicBlogController::class, 'show'])->name('blog.show');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:3,1')->name('contact.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -65,15 +93,15 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 |--------------------------------------------------------------------------
 */
 
-$adminPath = env('ADMIN_PATH', 'dashboard-admin');
+$adminPath = config('app.admin_path', 'dashboard-admin');
 
 Route::prefix($adminPath)->name('admin.')->group(function () {
-    Route::middleware('guest')->group(function () {
+    Route::middleware(['guest', 'throttle:5,1'])->group(function () {
         Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
         Route::post('/login', [AuthController::class, 'login']);
     });
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', 'is_admin'])->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 

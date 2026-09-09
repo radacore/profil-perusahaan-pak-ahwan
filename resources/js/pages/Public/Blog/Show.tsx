@@ -1,4 +1,5 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 interface PostCategory {
   id: number;
@@ -23,9 +24,21 @@ interface BlogShowProps {
 }
 
 export default function BlogShow({ post }: BlogShowProps) {
+  const { settings: sharedSettings } = usePage().props as unknown as { settings: Record<string, string> };
+  const settings = sharedSettings || {};
+  const plain = post.content ? post.content.replace(/<[^>]*>/g, '').slice(0, 155) : '';
+  const desc = post.excerpt || settings.meta_description || plain;
+  const canonical = typeof window !== 'undefined' ? `${window.location.origin}/blog/${post.slug}` : `/blog/${post.slug}`;
+
   return (
     <>
-      <Head title={post.title} />
+      <Head title={post.title}>
+        {desc && <meta name="description" content={desc} />}
+        <meta property="og:title" content={post.title} />
+        {desc && <meta property="og:description" content={desc} />}
+        <meta property="og:type" content="article" />
+        <link rel="canonical" href={canonical} />
+      </Head>
 
       {/* Page Header */}
       <section className="bg-gradient-to-br from-[#1E3A8A] to-[#0F172A] text-white">
@@ -77,7 +90,7 @@ export default function BlogShow({ post }: BlogShowProps) {
 
             {/* Content */}
             <div className="prose prose-lg mt-8 max-w-none text-[#1F2937]">
-              <div dangerouslySetInnerHTML={{ __html: post.content }} />
+              <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }} />
             </div>
 
             {/* Tags */}

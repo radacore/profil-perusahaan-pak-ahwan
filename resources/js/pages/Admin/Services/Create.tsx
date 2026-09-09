@@ -5,12 +5,15 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import InputError from '@/components/input-error';
+import RichTextEditor from '@/components/rich-text-editor';
+import IconPicker from '@/components/admin/icon-picker';
 
 export default function ServicesCreate() {
   const { data, setData, post, errors, processing } = useForm({
     title: '',
     description: '',
     short_description: '',
+    icon_name: '',
     is_published: false,
   });
 
@@ -43,6 +46,9 @@ export default function ServicesCreate() {
               <InputError message={errors.title} />
             </div>
 
+            <IconPicker value={data.icon_name} onChange={(v) => setData('icon_name', v)} />
+            <InputError message={errors.icon_name} />
+
             <div className="grid gap-2">
               <Label htmlFor="short_description">Deskripsi Singkat</Label>
               <textarea
@@ -57,12 +63,10 @@ export default function ServicesCreate() {
 
             <div className="grid gap-2">
               <Label htmlFor="description">Deskripsi Lengkap</Label>
-              <textarea
-                id="description"
-                rows={8}
-                className="border-input focus-visible:border-ring focus-visible:ring-ring/50 flex w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+              <RichTextEditor
                 value={data.description}
-                onChange={(e) => setData('description', e.target.value)}
+                onChange={(value) => setData('description', value)}
+                height={400}
               />
               <InputError message={errors.description} />
             </div>

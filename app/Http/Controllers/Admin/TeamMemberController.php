@@ -8,6 +8,7 @@ use App\Models\Media;
 use App\Services\ImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -41,7 +42,7 @@ class TeamMemberController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
             'linkedin_url' => ['nullable', 'string', 'max:255'],
             'is_published' => ['nullable', 'boolean'],
-            'photo' => ['nullable', 'image', 'mimes:jpeg,png,gif,webp', 'max:5120'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp,avif,gif', 'max:5120'],
         ]);
 
         $validated['is_published'] = $validated['is_published'] ?? true;
@@ -63,6 +64,7 @@ class TeamMemberController extends Controller
         }
 
         TeamMember::create($validated);
+        Cache::forget('homepage_data');
 
         return redirect()->route('admin.team.index')->with('success', 'Anggota tim berhasil ditambahkan.');
     }
@@ -86,7 +88,7 @@ class TeamMemberController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
             'linkedin_url' => ['nullable', 'string', 'max:255'],
             'is_published' => ['nullable', 'boolean'],
-            'photo' => ['nullable', 'image', 'mimes:jpeg,png,gif,webp', 'max:5120'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp,avif,gif', 'max:5120'],
         ]);
 
         if ($request->hasFile('photo')) {
@@ -106,6 +108,7 @@ class TeamMemberController extends Controller
         }
 
         $member->update($validated);
+        Cache::forget('homepage_data');
 
         return redirect()->route('admin.team.index')->with('success', 'Anggota tim berhasil diperbarui.');
     }
@@ -113,13 +116,14 @@ class TeamMemberController extends Controller
     public function destroy($id): RedirectResponse
     {
         TeamMember::findOrFail($id)->delete();
+        Cache::forget('homepage_data');
 
         return redirect()->route('admin.team.index')->with('success', 'Anggota tim berhasil dihapus.');
     }
 
     public function uploadPhoto(Request $request, $id): RedirectResponse
     {
-        $request->validate(['photo' => ['required', 'image', 'max:5120']]);
+        $request->validate(['photo' => ['required', 'image', 'mimes:jpeg,jpg,png,webp,avif,gif', 'max:5120']]);
 
         $data = $this->imageService->convertToWebp($request->file('photo'), 'team/photos');
 
@@ -134,6 +138,7 @@ class TeamMemberController extends Controller
         ]);
 
         TeamMember::findOrFail($id)->update(['media_id' => $media->id]);
+        Cache::forget('homepage_data');
 
         return redirect()->back()->with('success', 'Foto berhasil diupload.');
     }

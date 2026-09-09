@@ -14,7 +14,8 @@ interface ContactProps {
 }
 
 export default function Contact({}: ContactProps) {
-  const settings = (usePage().props as any).settings || {};
+  const { settings: sharedSettings } = usePage().props as unknown as { settings: Record<string, string> };
+  const settings = sharedSettings || {};
   const { data, setData, post, processing, errors, reset } = useForm<ContactForm>({
     name: '',
     email: '',
@@ -34,9 +35,18 @@ export default function Contact({}: ContactProps) {
     });
   }
 
+  const desc = settings.meta_description || 'Hubungi kami untuk konsultasi dan kerjasama.';
+  const canonical = typeof window !== 'undefined' ? `${window.location.origin}/contact` : '/contact';
+
   return (
     <>
-      <Head title="Kontak" />
+      <Head title="Kontak">
+        <meta name="description" content={desc} />
+        <meta property="og:title" content="Kontak" />
+        <meta property="og:description" content={desc} />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href={canonical} />
+      </Head>
 
       {/* Page Header */}
       <section className="bg-gradient-to-br from-[#1E3A8A] to-[#0F172A] text-white">

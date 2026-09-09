@@ -7,6 +7,7 @@ use App\Models\GlobalSetting;
 use App\Services\ImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -57,13 +58,15 @@ class SettingController extends Controller
                 ['setting_value' => $value ?? '']
             );
         }
+        Cache::forget('global_settings');
+        Cache::forget('homepage_data');
 
         return redirect()->back()->with('success', 'Pengaturan berhasil disimpan.');
     }
 
     public function uploadLogo(Request $request): RedirectResponse
     {
-        $request->validate(['file' => ['required', 'image', 'max:2048']]);
+        $request->validate(['file' => ['required', 'image', 'mimes:jpeg,jpg,png,webp,avif,gif', 'max:2048']]);
 
         $data = $this->imageService->convertToWebp($request->file('file'), 'settings');
 
@@ -71,13 +74,15 @@ class SettingController extends Controller
             ['setting_key' => 'company_logo'],
             ['setting_value' => $data['s3_url']]
         );
+        Cache::forget('global_settings');
+        Cache::forget('homepage_data');
 
         return redirect()->back()->with('success', 'Logo berhasil diupload.');
     }
 
     public function uploadFavicon(Request $request): RedirectResponse
     {
-        $request->validate(['file' => ['required', 'image', 'max:1024']]);
+        $request->validate(['file' => ['required', 'image', 'mimes:jpeg,jpg,png,webp,avif,gif,ico', 'max:1024']]);
 
         $data = $this->imageService->convertToWebp($request->file('file'), 'settings');
 
@@ -85,13 +90,14 @@ class SettingController extends Controller
             ['setting_key' => 'company_favicon'],
             ['setting_value' => $data['s3_url']]
         );
+        Cache::forget('global_settings');
 
         return redirect()->back()->with('success', 'Favicon berhasil diupload.');
     }
 
     public function uploadHeroImage(Request $request): RedirectResponse
     {
-        $request->validate(['file' => ['required', 'image', 'max:5120']]);
+        $request->validate(['file' => ['required', 'image', 'mimes:jpeg,jpg,png,webp,avif,gif', 'max:5120']]);
 
         $data = $this->imageService->convertToWebp($request->file('file'), 'settings');
 
@@ -99,6 +105,8 @@ class SettingController extends Controller
             ['setting_key' => 'hero_image'],
             ['setting_value' => $data['s3_url']]
         );
+        Cache::forget('global_settings');
+        Cache::forget('homepage_data');
 
         return redirect()->back()->with('success', 'Gambar hero berhasil diupload.');
     }

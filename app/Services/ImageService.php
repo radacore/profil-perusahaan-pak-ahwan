@@ -8,11 +8,13 @@ use Illuminate\Support\Facades\URL;
 
 class ImageService
 {
-    protected const QUALITY = 100;
+    protected const QUALITY = 82;
+    protected const MAX_WIDTH = 1920;
+    protected const MAX_HEIGHT = 1920;
 
     protected function storageDisk(): string
     {
-        return filled(env('AWS_BUCKET')) ? 's3' : 'public';
+        return filled(config('filesystems.disks.s3.bucket')) ? 's3' : 'public';
     }
 
     public function convertToWebp(UploadedFile $file, string $directory): array
@@ -45,6 +47,8 @@ class ImageService
             ];
         }
 
+        $image = $this->resizeIfNeeded($image);
+
         if (!imageistruecolor($image)) {
             imagepalettetotruecolor($image);
         }
@@ -70,5 +74,23 @@ class ImageService
             's3_path' => $storedPath,
             's3_url' => $disk === 's3' ? URL::route('s3.proxy', ['path' => $storedPath], false) : Storage::disk($disk)->url($storedPath),
         ];
+    }
+
+    private function resizeIfNeeded(\GdImage $image): \GdImage
+    {
+        $w = imagesx($image);
+        $h = imagesy($image);
+        if ($w <= self::MAX_WIDTH && $h <= self::MAX_HEIGHT) {
+            return $image;
+        }
+        $ratio = min(self::MAX_WIDTH / $w, self::MAX_HEIGHT / $h);
+        $nw = (int) round($w * $ratio);
+        $nh = (int) round($h * $ratio);
+        $resized = imagecreatetruecolor($nw, $nh);
+        imagealphablending($resized, false);
+        imagesavealpha($resized, true);
+        imagecopyresampled($resized, $image, 0, 0, 0, 0, $nw, $nh, $w, $h);
+        imagedestroy($image);
+        return $resized;
     }
 }

@@ -76,7 +76,7 @@ export default function AdminDashboard({ stats, quick_stats, recent_posts, recen
       <Head title="Dashboard" />
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Ringkasan data situs ProfilKorp</p>
+        <p className="mt-1 text-sm text-muted-foreground">Ringkasan data situs CV Azhari Permata Mandiri</p>
       </div>
 
       <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">

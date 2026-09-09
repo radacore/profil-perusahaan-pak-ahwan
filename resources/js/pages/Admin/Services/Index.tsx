@@ -5,11 +5,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { ConfirmDialog } from '@/components/confirm-dialog';
+import { getServiceIcon } from '@/lib/service-icons';
 
 interface Service {
   id: number;
   title: string;
   short_description?: string;
+  icon_name: string | null;
   is_published: boolean;
 }
 
@@ -57,6 +59,7 @@ export default function ServicesIndex({ services }: Props) {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Ikon</TableHead>
                   <TableHead>Judul</TableHead>
                   <TableHead>Deskripsi Singkat</TableHead>
                   <TableHead>Status</TableHead>
@@ -66,6 +69,14 @@ export default function ServicesIndex({ services }: Props) {
               <TableBody>
                 {services.data.map((service) => (
                   <TableRow key={service.id}>
+                    <TableCell>
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100 text-gray-600">
+                        {(() => {
+                          const { Icon } = getServiceIcon(service.icon_name);
+                          return <Icon className="h-4 w-4" />;
+                        })()}
+                      </div>
+                    </TableCell>
                     <TableCell className="font-medium text-[#1F2937]">{service.title}</TableCell>
                     <TableCell className="max-w-xs truncate text-[#6B7280]">
                       {service.short_description || '-'}

@@ -95,6 +95,7 @@ export default function ImageCarousel({ images }: Props) {
             <img
               src={images[index].url}
               alt={images[index].alt}
+              loading={index === 0 ? 'eager' : 'lazy'}
               className="h-auto w-full object-contain"
               style={{ aspectRatio: '16 / 9' }}
               draggable={false}

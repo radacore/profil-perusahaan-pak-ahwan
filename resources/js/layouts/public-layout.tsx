@@ -7,10 +7,10 @@ interface PublicLayoutProps {
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
   const { url } = usePage();
-  const { auth } = usePage().props;
+  const { auth, settings: sharedSettings } = usePage().props as unknown as { auth: { user: { id: number } | null }; settings: Record<string, string> };
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const settings = (usePage().props as any).settings || {};
+  const settings = sharedSettings || {};
 
   useEffect(() => {
     function handleScroll() {
@@ -27,11 +27,22 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
     { href: '/', label: 'Beranda' },
     { href: '/about', label: 'Tentang' },
     { href: '/services', label: 'Layanan' },
-    { href: '/portfolio', label: 'Portofolio' },
-    { href: '/team', label: 'Tim' },
     { href: '/blog', label: 'Blog' },
     { href: '/contact', label: 'Kontak' },
   ];
+
+  const anchorLinks = [
+    { hash: 'portfolio', label: 'Portofolio' },
+    { hash: 'team', label: 'Tim' },
+  ];
+
+  function handleAnchorClick(e: React.MouseEvent<HTMLAnchorElement>, hash: string) {
+    if (url === '/') {
+      e.preventDefault();
+      document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      history.pushState(null, '', `#${hash}`);
+    }
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -49,11 +60,38 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                 transparent ? 'text-white' : 'text-[#1E3A8A]'
               }`}
             >
-              {settings.company_name || 'ProfilKorp'}
+              {settings.company_name || 'CV Azhari Permata Mandiri'}
             </span>
           </Link>
           <nav className="hidden items-center gap-1 md:flex">
-            {navLinks.map((link) => (
+            {navLinks.slice(0, 3).map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors duration-300 ${
+                  transparent
+                    ? 'text-white/80 hover:bg-white/10 hover:text-white'
+                    : 'text-[#1F2937] hover:bg-[#E0F2FE] hover:text-[#1E3A8A]'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            {anchorLinks.map((a) => (
+              <a
+                key={a.hash}
+                href={url === '/' ? `#${a.hash}` : `/#${a.hash}`}
+                onClick={(e) => handleAnchorClick(e, a.hash)}
+                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors duration-300 ${
+                  transparent
+                    ? 'text-white/80 hover:bg-white/10 hover:text-white'
+                    : 'text-[#1F2937] hover:bg-[#E0F2FE] hover:text-[#1E3A8A]'
+                }`}
+              >
+                {a.label}
+              </a>
+            ))}
+            {navLinks.slice(3).map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -80,6 +118,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
             )}
           </nav>
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={`rounded-md p-2 transition-colors duration-300 md:hidden ${
               transparent ? 'text-white hover:bg-white/10' : 'text-[#6B7280] hover:bg-[#F3F4F6]'
@@ -97,7 +136,30 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
         {mobileMenuOpen && (
           <div className="border-t border-[#E5E7EB] bg-white md:hidden">
             <div className="space-y-1 px-4 pb-4 pt-2">
-              {navLinks.map((link) => (
+              {navLinks.slice(0, 3).map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="block rounded-md px-3 py-2 text-sm font-medium text-[#1F2937] hover:bg-[#E0F2FE] hover:text-[#1E3A8A]"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              {anchorLinks.map((a) => (
+                <a
+                  key={a.hash}
+                  href={url === '/' ? `#${a.hash}` : `/#${a.hash}`}
+                  onClick={(e) => {
+                    handleAnchorClick(e as any, a.hash);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="block rounded-md px-3 py-2 text-sm font-medium text-[#1F2937] hover:bg-[#E0F2FE] hover:text-[#1E3A8A]"
+                >
+                  {a.label}
+                </a>
+              ))}
+              {navLinks.slice(3).map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -116,7 +178,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="grid gap-8 md:grid-cols-3">
             <div>
-              <h3 className="text-lg font-semibold">{settings.company_name || 'ProfilKorp'}</h3>
+              <h3 className="text-lg font-semibold">{settings.company_name || 'CV Azhari Permata Mandiri'}</h3>
               <p className="mt-2 text-sm text-[#D1D5DB]">Solusi profesional untuk kebutuhan bisnis Anda.</p>
             </div>
             <div>
@@ -128,7 +190,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold">Ikuti Kami</h3>
+              <h3 className="text-lg font-semibold"><span>Ikuti Kami</span></h3>
               <div className="mt-2 flex gap-4">
                 {settings.social_facebook && <a href={settings.social_facebook} target="_blank" rel="noopener noreferrer" className="text-[#D1D5DB] hover:text-white">Facebook</a>}
                 {settings.social_linkedin && <a href={settings.social_linkedin} target="_blank" rel="noopener noreferrer" className="text-[#D1D5DB] hover:text-white">LinkedIn</a>}
@@ -137,7 +199,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
             </div>
           </div>
           <div className="mt-8 border-t border-[#374151] pt-8 text-center text-sm text-[#D1D5DB]">
-            &copy; {new Date().getFullYear()} {settings.company_name || 'ProfilKorp'}. All rights reserved.
+            &copy; {new Date().getFullYear()} {settings.company_name || 'CV Azhari Permata Mandiri'}. All rights reserved.
           </div>
         </div>
       </footer>

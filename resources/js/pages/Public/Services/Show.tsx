@@ -1,12 +1,5 @@
-import { Head, Link } from '@inertiajs/react';
-
-interface PortfolioProject {
-  id: number;
-  title: string;
-  slug: string;
-  thumbnail: string | null;
-  client: string;
-}
+import { Head, Link, usePage } from '@inertiajs/react';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 interface ServiceDetail {
   id: number;
@@ -18,13 +11,21 @@ interface ServiceDetail {
 
 interface ServicesShowProps {
   service: ServiceDetail;
-  relatedProjects: PortfolioProject[];
 }
 
-export default function ServicesShow({ service, relatedProjects }: ServicesShowProps) {
+export default function ServicesShow({ service }: ServicesShowProps) {
+  const plain = service.description ? service.description.replace(/<[^>]*>/g, '').slice(0, 155) : '';
+  const canonical = typeof window !== 'undefined' ? `${window.location.origin}/services/${service.slug}` : `/services/${service.slug}`;
+
   return (
     <>
-      <Head title={service.title} />
+      <Head title={service.title}>
+        {plain && <meta name="description" content={plain} />}
+        <meta property="og:title" content={service.title} />
+        {plain && <meta property="og:description" content={plain} />}
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href={canonical} />
+      </Head>
 
       {/* Page Header */}
       <section className="bg-gradient-to-br from-[#1E3A8A] to-[#0F172A] text-white">
@@ -48,7 +49,7 @@ export default function ServicesShow({ service, relatedProjects }: ServicesShowP
           <div className="grid gap-12 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <div className="prose prose-lg max-w-none text-[#1F2937]">
-                <div dangerouslySetInnerHTML={{ __html: service.description }} />
+                <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(service.description) }} />
               </div>
             </div>
 
@@ -79,42 +80,6 @@ export default function ServicesShow({ service, relatedProjects }: ServicesShowP
         </div>
       </section>
 
-      {/* Related Projects */}
-      {relatedProjects.length > 0 && (
-        <section className="bg-[#F3F4F6] py-16">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-[#1F2937]">Proyek Terkait</h2>
-            <p className="mt-2 text-[#6B7280]">Portofolio proyek yang terkait dengan layanan ini.</p>
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {relatedProjects.map((project) => (
-                <Link
-                  key={project.id}
-                  href={`/portfolio/${project.slug}`}
-                  className="group rounded-lg border border-[#E5E7EB] bg-white overflow-hidden shadow-sm transition-all hover:shadow-md"
-                >
-                  {project.thumbnail ? (
-                    <img
-                      src={project.thumbnail}
-                      alt={project.title}
-                      className="h-48 w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-48 items-center justify-center bg-[#E0F2FE]">
-                      <svg className="h-12 w-12 text-[#1E3A8A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                  )}
-                  <div className="p-4">
-                    <h3 className="font-semibold text-[#1F2937] group-hover:text-[#1E3A8A]">{project.title}</h3>
-                    <p className="mt-1 text-sm text-[#6B7280]">{project.client}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
     </>
   );
 }

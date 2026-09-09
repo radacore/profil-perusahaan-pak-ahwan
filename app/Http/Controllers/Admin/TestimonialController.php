@@ -7,6 +7,7 @@ use App\Models\Testimonial;
 use App\Services\ImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -49,6 +50,7 @@ class TestimonialController extends Controller
         ]);
 
         Testimonial::create($validated);
+        Cache::forget('homepage_data');
 
         return redirect()->route('admin.testimonials.index')->with('success', 'Testimonial berhasil ditambahkan.');
     }
@@ -74,6 +76,7 @@ class TestimonialController extends Controller
         ]);
 
         $testimonial->update($validated);
+        Cache::forget('homepage_data');
 
         return redirect()->route('admin.testimonials.index')->with('success', 'Testimonial berhasil diperbarui.');
     }
@@ -81,13 +84,14 @@ class TestimonialController extends Controller
     public function destroy($id): RedirectResponse
     {
         Testimonial::findOrFail($id)->delete();
+        Cache::forget('homepage_data');
 
         return redirect()->route('admin.testimonials.index')->with('success', 'Testimonial berhasil dihapus.');
     }
 
     public function uploadImage(Request $request, $id): RedirectResponse
     {
-        $request->validate(['image' => ['required', 'image', 'max:3072']]);
+        $request->validate(['image' => ['required', 'image', 'mimes:jpeg,jpg,png,webp,avif,gif', 'max:3072']]);
 
         $data = $this->imageService->convertToWebp($request->file('image'), 'testimonials');
         Testimonial::findOrFail($id)->update(['image_url' => $data['s3_url']]);
